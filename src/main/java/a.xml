@@ -3,8 +3,10 @@
 <ID>1</ID>
 <Fees>1000.21</Fees>
 <Name>
-	Robert
-	<numver>aaa</numver></Name>
+	<ha>Robert</ha>
+	<numver>aaa</numver>
+	<ha>asdasd</ha>
+</Name>
 <?xml version="1.0"?>
 <catalog>
    <book id="bk101">
