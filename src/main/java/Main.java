@@ -13,7 +13,7 @@ class Main{
 	
 	public static void main(String[] args) {
 		
-		String pointer = "/note/to";
+		String pointer = "/note/to/random";
 		File xml = new File("simpleXML.xml");
 		FileReader reader;
 		try {
@@ -58,9 +58,11 @@ class Main{
 					x.skipPast("<");
 					if (x.more()) {
 						System.out.println(tag);
-						if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL))
-							System.out.println(jo);
+						if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
+							//System.out.println(jo);
 							break;
+						}
+						
 					}
 				}
 			}
