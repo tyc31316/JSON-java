@@ -13,8 +13,8 @@ class Main{
 	
 	public static void main(String[] args) {
 		
-		String pointer = "/catalog/book";
-		File xml = new File("a.xml");
+		String pointer = "/note/to";
+		File xml = new File("simpleXML.xml");
 		FileReader reader;
 		try {
 			reader = new FileReader(xml);
@@ -32,7 +32,7 @@ class Main{
 //				System.out.println(pathArr[i]);
 //			}
 
-			//System.out.println(Arrays.toString(pathArr));
+			System.out.println(Arrays.toString(pathArr));
 	        boolean found = false;
 	        int i = 0; // record the position in pathArr
 	        String tag = pathArr[0];
@@ -41,34 +41,26 @@ class Main{
 				while (!found) {
 					x.skipPast("<");
 					if (x.more()) {
+						//System.out.println(x.nextToken());
 						if (x.nextToken().equals(tag)) {
 							
 							if(i == pathArr.length-1) {
+								System.out.println(tag);
 								found = true;
 							}else {
 								i++;
 								tag = pathArr[i];
 							}
-							//found = true;
 								
 						}
 					}
 				}
-				
 				if (found) {
-					
 					x.skipPast("<");
-					
 					if (x.more()) {
-						
 						System.out.println(tag);
-						//System.out.println("!"+x.nextToken());
-						//x.nextToken();
-						
-						if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) 
+						if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL))
 							break;
-						//System.out.println(XML.parse(x, jo, "to", XMLParserConfiguration.ORIGINAL));
-						//System.out.println(jo.toString(4));
 							
 					}
 				}
