@@ -253,7 +253,7 @@ public class XML {
      * @return true if the close tag is processed.
      * @throws JSONException
      */
-    private static boolean parse(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config)
+    public static boolean parse(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config)
             throws JSONException {
         char c;
         int i;
@@ -708,6 +708,14 @@ public class XML {
     public static JSONObject toJSONObject(String string, XMLParserConfiguration config) throws JSONException {
         return toJSONObject(new StringReader(string), config);
     }
+    
+    static JSONObject toJSONObject(Reader reader, JSONPointer path) {
+    	return null;
+    }
+    
+    
+    
+    
 
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
