@@ -13,8 +13,8 @@ class Main{
 	
 	public static void main(String[] args) {
 		
-		String pointer = "/note/to/random";
-		File xml = new File("simpleXML.xml");
+		String pointer = "/test/catalog/book";
+		File xml = new File("a.xml");
 		FileReader reader;
 		try {
 			reader = new FileReader(xml);
@@ -34,11 +34,13 @@ class Main{
 
 			System.out.println(Arrays.toString(pathArr));
 	        boolean found = false;
+	        boolean first = false;
+	        boolean more = true;
 	        int i = 0; // record the position in pathArr
 	        String tag = pathArr[0];
 
 	        while(x.more()) {
-				while (!found) {
+				while (x.more()) {
 					x.skipPast("<");
 					if (x.more()) {
 						//System.out.println(x.nextToken());
@@ -47,23 +49,32 @@ class Main{
 							if(i == pathArr.length-1) {
 								System.out.println(tag);
 								found = true;
+								break;
 							}else {
 								i++;
 								tag = pathArr[i];
 							}
+						}else if(first) {
+							more = false;
+							break;
 						}
 					}
 				}
+				if(!more)
+					break;
+				while(x.more()) {
 				if (found) {
 					x.skipPast("<");
 					if (x.more()) {
-						System.out.println(tag);
+						//System.out.println(tag);
 						if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
-							//System.out.println(jo);
+							//System.out.println(jo.toString(4));
+							first = true;
 							break;
 						}
 						
 					}
+				}
 				}
 			}
 	        

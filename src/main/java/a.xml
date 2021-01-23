@@ -11,6 +11,7 @@
 	<ha>asdasd</ha>
 </Name>
 <?xml version="1.0"?>
+<test>
 <catalog>
    <book id="bk101">
       <author>Gambardella, Matthew</author>
@@ -130,4 +131,5 @@
       environment.</description>
    </book>
 </catalog>
+<test>
 
