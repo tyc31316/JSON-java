@@ -51,7 +51,6 @@ class Main{
 								i++;
 								tag = pathArr[i];
 							}
-								
 						}
 					}
 				}
@@ -60,8 +59,8 @@ class Main{
 					if (x.more()) {
 						System.out.println(tag);
 						if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL))
+							System.out.println(jo);
 							break;
-							
 					}
 				}
 			}
