@@ -1,7 +1,10 @@
 <note>
     <to>
         <random>Tove</random>
-        <random>ahah</random>
+<!--        <random>-->
+<!--            <h1>ahah</h1>-->
+<!--            <h2>jjh</h2>-->
+<!--        </random>-->
     </to>
     <from>Jani</from>
     <heading>Reminder</heading>

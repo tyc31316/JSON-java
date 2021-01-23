@@ -49,7 +49,6 @@ class Main{
 								System.out.println(tag);
 								found = true;
 							}
-								
 						}
 					}
 				}
@@ -58,8 +57,8 @@ class Main{
 					if (x.more()) {
 						System.out.println(tag);
 						if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL))
+							System.out.println(jo);
 							break;
-							
 					}
 				}
 			}
