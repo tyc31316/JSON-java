@@ -47,7 +47,7 @@ class Main{
 						if (x.nextToken().equals(tag)) {
 							
 							if(i == pathArr.length-1) {
-								System.out.println(tag);
+								//System.out.println(tag);
 								found = true;
 								break;
 							}else {
@@ -63,18 +63,18 @@ class Main{
 				if(!more)
 					break;
 				while(x.more()) {
-				if (found) {
-					x.skipPast("<");
-					if (x.more()) {
-						//System.out.println(tag);
-						if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
-							//System.out.println(jo.toString(4));
-							first = true;
-							break;
+					if (found) {
+						x.skipPast("<");
+						if (x.more()) {
+							//System.out.println(tag);
+							if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
+								//System.out.println(jo.toString(4));
+								first = true;
+								break;
+							}
+							
 						}
-						
 					}
-				}
 				}
 			}
 	        

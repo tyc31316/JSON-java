@@ -710,6 +710,10 @@ public class XML {
     }
     
     static JSONObject toJSONObject(Reader reader, JSONPointer path) {
+    	String pointer = path.toString();
+    	
+    	
+    	
     	return null;
     }
     
