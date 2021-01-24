@@ -779,7 +779,58 @@ public class XML {
     	return jo;
     }
     
-    
+    static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
+    	
+    	JSONObject jo = XML.toJSONObject(reader);
+    	String pointer = path.toString();
+    	
+    	if(pointer.charAt(0) == '/') {
+			pointer = pointer.substring(1);
+		}
+		pointer = pointer.replace("/", "//s");
+		String[] pathArr = pointer.split("//s+");
+		 
+		if( pathArr.length == 0)
+			return jo;
+    	
+		JSONObject tempob = jo; //temporary object for iteration
+        JSONArray tempar = new JSONArray(); //temporary array for iteration
+        boolean type = true; //true for object false for array
+        int n = pathArr.length;
+        for(int i = 1 ; i < n-1 ; i++){
+            if(type){
+                if(tempob.opt(pathArr[i]) instanceof JSONObject){
+                    tempob = (JSONObject)tempob.opt(pathArr[i]);
+                }else if(tempob.opt(pathArr[i]) instanceof JSONArray){
+                    tempar =(JSONArray) tempob.opt(pathArr[i]);
+                    type = false;
+                }else{
+                	
+                    return jo;
+                }
+            }else{
+                if(tempar.opt(Integer.parseInt(pathArr[i])) instanceof JSONObject){
+                    tempob = (JSONObject) tempob.opt(pathArr[i]);
+                    type = true;
+                }else if(tempar.opt(Integer.parseInt(pathArr[i])) instanceof JSONArray){
+                    tempar = (JSONArray) tempob.opt(pathArr[i]);
+                }else{
+                    
+                    return jo;
+                }
+            }
+        }
+        if(type){
+            if(tempob.opt(pathArr[n-1]) != null)
+                tempob.put(pathArr[n-1],replacement);
+        }
+        else{
+            if(tempar.opt(Integer.parseInt(pathArr[n-1])) != null)
+                tempar.put(Integer.parseInt(pathArr[n-1]),replacement);
+        }
+		
+    	return jo;
+    }
     
     
 
