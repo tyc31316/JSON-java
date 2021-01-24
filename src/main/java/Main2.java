@@ -1,3 +1,4 @@
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 import org.json.XMLParserConfiguration;
@@ -36,7 +37,7 @@ class Main2{
             boolean found = false;
             boolean more = true;
             boolean isArray = false;
-            JSONObject listObj = new JSONObject();
+            JSONArray listObj = new JSONArray();
             int i = 0; // record the position in pathArr
             String tag = pathArr[0];
             String prevTag = "";
@@ -79,7 +80,7 @@ class Main2{
                         if(isArray) {
                             JSONObject jo2 = new JSONObject();
                             if(XML.parse(x, jo2, tag, XMLParserConfiguration.ORIGINAL)) {
-                                listObj.accumulate("", jo);
+                                listObj.put(jo);
                                 break;
                             }
                         }
