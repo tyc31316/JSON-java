@@ -792,9 +792,9 @@ public class XML {
 		if( pathArr.length == 0)
 			return jo;
     	
-		JSONObject tempob = jo; //temporary object for iteration
+		JSONObject tempob = jo; 			//temporary object for iteration
         JSONArray tempar = new JSONArray(); //temporary array for iteration
-        boolean type = true; //true for object false for array
+        boolean type = true; 				//true for object false for array
         int n = pathArr.length;
         for(int i = 1 ; i < n-1 ; i++){
             if(type){

@@ -6,50 +6,50 @@ import org.json.XMLTokener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 //import java.util.*;
 
 class Main{
 	
 	public static void main(String[] args) {
 		
-		String pointer = "/test/catalog/book";
+		String pointer = "/catalog";
+		List<Integer> tagofarray = new ArrayList();
 		File xml = new File("a.xml");
 		FileReader reader;
 		try {
 			reader = new FileReader(xml);
 			JSONObject jo = new JSONObject();
 	        XMLTokener x = new XMLTokener(reader);
-	        //System.out.println(x);
-
 			if(pointer.charAt(0) == '/') {
 				pointer = pointer.substring(1);
 			}
-			pointer = pointer.replace("/", "//s");
-			String[] pathArr = pointer.split("//s+");
-//
-//			for(int i = 0; i < pathArr.length; i++) {
-//				System.out.println(pathArr[i]);
-//			}
-
+			pointer = pointer.replace("/", " ");
+			String[] pathArr = pointer.split("\\s+");
+			
 			if(pathArr.length == 0){							//trivial case
 				System.out.println(XML.toJSONObject(reader));
 				return;
 			}
 			
+			for(int i = 1 ; i < pathArr.length ; i++) {
+				if(isNum( pathArr[i]) ) {
+					tagofarray.add(i-1);
+				}
+			}
 			
-			//System.out.println(Arrays.toString(pathArr));
+			
 	        boolean found = false;
 	        boolean more = true; 
-	        int i = 0; // record the position in pathArr
+	        int i = 0; 
 	        String tag = pathArr[0];
 
 	        while(x.more()) {
 				while (x.more()) {
 					x.skipPast("<");
 					if (x.more()) {
-						//System.out.println("where");
-						//System.out.println(x.nextToken());
 						if (x.nextToken().equals(tag)) {
 							
 							if(i == pathArr.length-1) {
@@ -72,12 +72,8 @@ class Main{
 						x.skipPast("<");
 						if (x.more()) {
 							if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
-								//System.out.println("here");
-								//System.out.println(jo.toString(4));
 								break;
 							}
-							//System.out.println(jo.toString(4));
-							//System.out.println("there");
 						}
 					}
 				}
@@ -95,5 +91,21 @@ class Main{
 			e.printStackTrace();
 		}
 		
+		
+		
+		
 	}
+	
+	public static boolean isNum(String str) {
+		
+		try {
+			int val = Integer.parseInt(str);
+		}catch(NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	
+	
 }
