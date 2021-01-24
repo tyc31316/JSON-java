@@ -6,6 +6,8 @@ import org.json.XMLTokener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 class Main2{
 
@@ -19,6 +21,9 @@ class Main2{
             JSONObject jo = new JSONObject();
             JSONObject garbage = new JSONObject();
             XMLTokener x = new XMLTokener(reader);
+
+            ArrayList<String> numbers = new ArrayList<String>(Arrays.asList("0", "1", "2", "3", "4",
+                                                        "5","6", "7", "8", "9"));
 
             if(pointer.charAt(0) == '/') {
                 pointer = pointer.substring(1);
@@ -35,6 +40,7 @@ class Main2{
             boolean more = true;		//stop reading immediately when false
             boolean found = false;		//found some tag in the path (could be the tags in the middle)
             boolean finaltag = false;	//found the last tag in the path
+            boolean isArray = false;
             int i = 0; 					//record the position in pathArr
             String tag = pathArr[0];	//current tag in the pathArr
             String curtag = "";			//tags that read from the xml file
@@ -44,38 +50,50 @@ class Main2{
 
                 x.skipPast("<");
 
-                    // find the token that IS a String
+                // find the token that IS a String
+                token = x.nextToken();
+                while(!(token instanceof String) && x.more()){
+                    x.skipPast("<");
                     token = x.nextToken();
-                    while(!(token instanceof String) && x.more()){
-                        x.skipPast("<");
-                        token = x.nextToken();
-                    }
+                }
 
-                    //check if the token match our tag in path
-
-                    curtag = (String) token;
-                    if(curtag.equals(tag)){			//the token is in our path
-                        found = true;
-                        if(i == pathArr.length-1) {
-                            finaltag = true;		//it is the last tag in our path
-                        }else {
-                            finaltag = false;		//it is one of the middle tags
-                            i++;
-                            tag = pathArr[i];
-                        }
+                //check if the token match our tag in path
+                curtag = (String) token;
+                if(curtag.equals(tag)){			//the token is in our path
+                    found = true;
+                    if(i == pathArr.length-1) {
+                        finaltag = true;		//it is the last tag in our path
+                    }else {
+                        finaltag = false;		//it is one of the middle tags
+                        i++;
+                        tag = pathArr[i];
                     }
-                    else {
-                        found = false;				//the token is not in our path
+                }
+                else {
+                    if(numbers.contains(curtag)) {
+                        found = true;           // indicating arraylist
+                        isArray = true;
                     }
+                    found = false;				//the token is not in our path, but what if it's a number?
+                }
 
+                if(isArray) {
+                    int desiredIndx = Integer.parseInt(curtag);
+                    int counter = 0;
+                }
 
                 while(x.more()) {
 
                     if(found && finaltag){		//found the final tag in the path, process it!
-                        more = false;
-                        x.skipPast("<");
-                        if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
-                            break;
+                        if(isArray) {
+
+                        }
+                        else {
+                            more = false;
+                            x.skipPast("<");
+                            if (XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
+                                break;
+                            }
                         }
                     } else if(!found){			//unwanted tag, put the whole thing in garbage
                         x.skipPast("<");
@@ -88,13 +106,7 @@ class Main2{
                     }
                 }
             }
-            //System.out.println(garbage.toString(4));
             System.out.println(jo.toString(4));
-
-
-
-
-
 
 
         } catch (FileNotFoundException e) {
