@@ -12,13 +12,12 @@ class Main2{
 
     public static void main(String[] args) {
 
-        String pointer = "/test/catalog";
+        String pointer = "/test/catalog/book";
         File xml = new File("a.xml");
         FileReader reader;
         try {
             reader = new FileReader(xml);
             JSONObject jo = new JSONObject();
-            JSONObject list = new JSONObject();
             XMLTokener x = new XMLTokener(reader);
             //System.out.println(x);
 
@@ -32,7 +31,6 @@ class Main2{
                 System.out.println(XML.toJSONObject(reader));
                 return;
             }
-
 
             //System.out.println(Arrays.toString(pathArr));
             boolean found = false;
@@ -54,8 +52,6 @@ class Main2{
                         System.out.println(tag);
                         if(i == pathArr.length-1) {
                             if(tag.equals(prevTag)) {
-                                System.out.println("line 57: here?");
-
                                 isArray = true;
                             }
                             prevTag = tag;
@@ -96,8 +92,12 @@ class Main2{
                 }
             }
 
-            System.out.println(listObj.toString(4));
-            System.out.println(jo.toString(4));
+            if(isArray) {
+                System.out.println(listObj.toString(4));
+            }
+            else {
+                System.out.println(jo.toString(4));
+            }
 
 
 

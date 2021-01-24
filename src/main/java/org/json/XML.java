@@ -26,7 +26,6 @@ SOFTWARE.
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
@@ -709,7 +708,7 @@ public class XML {
         return toJSONObject(new StringReader(string), config);
     }
     
-    static JSONObject toJSONObject(Reader reader, JSONPointer path) {
+    public static JSONObject toJSONObject(Reader reader, JSONPointer path) {
     	
     	XMLTokener x = new XMLTokener(reader);	//to read xml file
     	String pointer = path.toString();		//make the pointer to be a String
@@ -721,8 +720,8 @@ public class XML {
         if(pointer.charAt(0) == '/') {
 			pointer = pointer.substring(1);
 		}
-		pointer = pointer.replace("/", "//s");
-		String[] pathArr = pointer.split("//s+");
+		pointer = pointer.replace("/", " ");
+		String[] pathArr = pointer.split("\\s+");
 		
 		if(pathArr.length == 0)				//trivial case
 			return toJSONObject(reader);	//return the whole JSON object
@@ -779,7 +778,7 @@ public class XML {
     	return jo;
     }
     
-    static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
+    public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
     	
     	JSONObject jo = XML.toJSONObject(reader);
     	String pointer = path.toString();
@@ -787,8 +786,8 @@ public class XML {
     	if(pointer.charAt(0) == '/') {
 			pointer = pointer.substring(1);
 		}
-		pointer = pointer.replace("/", "//s");
-		String[] pathArr = pointer.split("//s+");
+		pointer = pointer.replace("/", " ");
+		String[] pathArr = pointer.split("\\s+");
 		 
 		if( pathArr.length == 0)
 			return jo;
