@@ -32,10 +32,15 @@ class Main{
 //				System.out.println(pathArr[i]);
 //			}
 
-			System.out.println(Arrays.toString(pathArr));
+			if(pathArr.length == 0){							//trivial case
+				System.out.println(XML.toJSONObject(reader));
+				return;
+			}
+			
+			
+			//System.out.println(Arrays.toString(pathArr));
 	        boolean found = false;
-	        boolean first = false;
-	        boolean more = true;
+	        boolean more = true; 
 	        int i = 0; // record the position in pathArr
 	        String tag = pathArr[0];
 
@@ -43,18 +48,18 @@ class Main{
 				while (x.more()) {
 					x.skipPast("<");
 					if (x.more()) {
+						//System.out.println("where");
 						//System.out.println(x.nextToken());
 						if (x.nextToken().equals(tag)) {
 							
 							if(i == pathArr.length-1) {
-								//System.out.println(tag);
 								found = true;
 								break;
 							}else {
 								i++;
 								tag = pathArr[i];
 							}
-						}else if(first) {
+						}else if(found) {
 							more = false;
 							break;
 						}
@@ -66,13 +71,13 @@ class Main{
 					if (found) {
 						x.skipPast("<");
 						if (x.more()) {
-							//System.out.println(tag);
 							if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
+								//System.out.println("here");
 								//System.out.println(jo.toString(4));
-								first = true;
 								break;
 							}
-							
+							//System.out.println(jo.toString(4));
+							//System.out.println("there");
 						}
 					}
 				}
@@ -90,6 +95,5 @@ class Main{
 			e.printStackTrace();
 		}
 		
-        //return jo;
 	}
 }

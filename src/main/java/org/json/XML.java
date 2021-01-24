@@ -710,11 +710,73 @@ public class XML {
     }
     
     static JSONObject toJSONObject(Reader reader, JSONPointer path) {
-    	String pointer = path.toString();
     	
+    	XMLTokener x = new XMLTokener(reader);	//to read xml file
+    	String pointer = path.toString();		//make the pointer to be a String
     	
-    	
-    	return null;
+    	/*************************************************
+    	 * parse the pointer into array of String (tags) *
+    	 *************************************************/
+        
+        if(pointer.charAt(0) == '/') {
+			pointer = pointer.substring(1);
+		}
+		pointer = pointer.replace("/", "//s");
+		String[] pathArr = pointer.split("//s+");
+		
+		if(pathArr.length == 0)				//trivial case
+			return toJSONObject(reader);	//return the whole JSON object
+		
+		
+		
+		/*****************************************************
+		 * start reading xml file and looking for target tag *
+		 * use XML.parse function to extract the sub object  *
+		 *****************************************************/
+		
+		boolean found = false;				//true if found the target tag (last tag) in the pointer
+        boolean more = true;	 			//true if there are more tags to read
+        int i = 0; 							//record the position in pathArr in order to find the target tag (last tag)
+        String tag = pathArr[0]; 			//start with first tag in pointer
+        JSONObject jo = new JSONObject(); 	//the json object to be returned
+        
+        
+        while(x.more()) {
+			while (x.more()) {
+				x.skipPast("<");
+				if (x.more()) {
+					
+					if (x.nextToken().equals(tag)) {
+						
+						if(i == pathArr.length-1) {	//found the last tag!
+							found = true;
+							break;
+						}else {
+							i++;
+							tag = pathArr[i];
+						}
+					}else if(found) {				//target tag already found and read
+						more = false;				//can stop reading
+						break;						
+					}
+				}
+			}
+			if(!more)
+				break;
+			while(x.more()) {
+				if (found) {
+					x.skipPast("<");
+					if (x.more()) {
+						if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
+							break;
+						}
+						
+					}
+				}
+			}
+		}
+		
+    	return jo;
     }
     
     
