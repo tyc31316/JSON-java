@@ -1,7 +1,4 @@
-import org.json.JSONObject;
-import org.json.XML;
-import org.json.XMLParserConfiguration;
-import org.json.XMLTokener;
+import org.json.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,13 +8,43 @@ import java.util.Arrays;
 
 class Main2{
 
+//    public static JSONObject toJSONObject(Reader reader, JSONPointer path) {
+//        JSONObject jo = new JSONObject();
+//        XMLTokener x = new XMLTokener(reader);
+//        String[] pathArr = path.toString().split("/");
+//        ArrayList<String> numbers = new ArrayList<String>(Arrays.asList("0", "1", "2", "3", "4",
+//                                                                        "5","6", "7", "8", "9"));
+//        int whereItIsArray = 0;
+//        for(int i = 0; i < pathArr.length; i++) {
+//            if(numbers.contains(pathArr[i])) {
+//                whereItIsArray = i;
+//                break;
+//            }
+//        }
+//
+//        while(x.more()) {
+//            x.skipPast("<");
+//            if(x.more()) {
+//                XML.parse(x, jo, null, XMLParserConfiguration.ORIGINAL);
+//            }
+//        }
+//        Object query = jo.query(path);
+//        System.out.println(query);
+//
+//        return (JSONObject) query;
+//    }
+
     public static void main(String[] args) {
 
-        String pointer = "/test/catalog/book";
-        File xml = new File("a.xml");
-        FileReader reader;
         try {
-            reader = new FileReader(xml);
+            String pointer = "/test/catalog";
+            File xml = new File("a.xml");
+            FileReader reader = new FileReader(xml);
+//            JSONPointer pointer = new JSONPointer("/test/catalog/book/2");
+
+//            JSONObject jo = toJSONObject(reader, pointer);
+
+
             JSONObject jo = new JSONObject();
             JSONObject garbage = new JSONObject();
             XMLTokener x = new XMLTokener(reader);
@@ -54,7 +81,7 @@ class Main2{
                 token = x.nextToken();
                 while(!(token instanceof String) && x.more()){
                     x.skipPast("<");
-                    token = x.nextToken();
+                    System.out.println(token = x.nextToken());
                 }
 
                 //check if the token match our tag in path
@@ -76,17 +103,29 @@ class Main2{
                     }
                     found = false;				//the token is not in our path, but what if it's a number?
                 }
-
+                int desiredIndx = 0;
+                int counter = 0;
                 if(isArray) {
-                    int desiredIndx = Integer.parseInt(curtag);
-                    int counter = 0;
+                    desiredIndx = Integer.parseInt(curtag);
+                    counter = 0;
                 }
 
                 while(x.more()) {
 
                     if(found && finaltag){		//found the final tag in the path, process it!
                         if(isArray) {
-
+                            while(x.more()) {
+                                if (counter == desiredIndx) {
+                                    if(XML.parse(x, jo, curtag, XMLParserConfiguration.ORIGINAL)) {
+                                        break;
+                                    }
+                                } else {
+                                    if(XML.parse(x, garbage, curtag, XMLParserConfiguration.ORIGINAL)) {
+                                        counter++;
+                                        x.skipPast("<");
+                                    }
+                                }
+                            }
                         }
                         else {
                             more = false;
@@ -104,6 +143,15 @@ class Main2{
                     } else {						//some middle tags, just do nothing and keep looking for the next tag
                         break;
                     }
+                }
+            }
+
+            while(x.more()) {
+                x.skipPast("<");
+                if(x.more()) {
+                    XML.parse(x, jo, null, XMLParserConfiguration.ORIGINAL);
+                    Object query = jo.query(pointer);
+                    System.out.println(query);
                 }
             }
             System.out.println(jo.toString(4));

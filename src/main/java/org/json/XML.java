@@ -778,7 +778,7 @@ public class XML {
     	return jo;
     }
     
-    public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
+    static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
     	
     	JSONObject jo = XML.toJSONObject(reader);
     	String pointer = path.toString();
@@ -871,7 +871,7 @@ public class XML {
      * @return A string.
      * @throws JSONException Thrown if there is an error parsing the string
      */
-    public static String toString(final Object object, final String tagName, final XMLParserConfiguration config)
+    static String toString(final Object object, final String tagName, final XMLParserConfiguration config)
             throws JSONException {
         StringBuilder sb = new StringBuilder();
         JSONArray ja;
