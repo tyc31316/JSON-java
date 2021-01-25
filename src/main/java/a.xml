@@ -1,7 +1,17 @@
 <Active> true </Active>
 <Details>asdf</Details>
 <ID>1</ID>
-<Fees>1000.21</Fees>
+<Fees>
+	<date>
+	1000.21
+	</date>
+	<date>
+	1000.21
+	</date>
+	<date>
+	1000.21
+	</date>
+</Fees>
 <Name>
 	<ha>
 		Robert
@@ -131,6 +141,11 @@
       integrated into a comprehensive development
       environment.</description>
    </book>
+</catalog>
+<catalog>
+	<book>
+		HI~
+	</book>
 </catalog>
 </test>
 

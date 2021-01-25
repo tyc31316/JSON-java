@@ -871,7 +871,7 @@ public class XML {
      * @return A string.
      * @throws JSONException Thrown if there is an error parsing the string
      */
-    static String toString(final Object object, final String tagName, final XMLParserConfiguration config)
+    public static String toString(final Object object, final String tagName, final XMLParserConfiguration config)
             throws JSONException {
         StringBuilder sb = new StringBuilder();
         JSONArray ja;
