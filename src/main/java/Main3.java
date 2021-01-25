@@ -11,7 +11,7 @@ class Main3{
 	
 	public static void main(String[] args) {
 		
-		String pointer = "/test/catalog/book";
+		String pointer = "/test/catalog/book/3";
 		File xml = new File("a.xml");
 		FileReader reader;
 		try {
@@ -19,7 +19,10 @@ class Main3{
 			JSONObject jo = new JSONObject();
 			JSONObject garbage = new JSONObject();
 	        XMLTokener x = new XMLTokener(reader);
-
+	        if(pointer.length() == 0) {
+	        	System.out.println(jo.toString());
+	        	return;
+	        }
 			if(pointer.charAt(0) == '/') {
 				pointer = pointer.substring(1);
 			}
@@ -31,18 +34,24 @@ class Main3{
 				System.out.println(XML.toJSONObject(reader));
 				return;
 			}
-			
+			int index = 0;				//record the index of JSONArray in the path
+			int count = 0;				//count to see if index is reached or not
+			boolean isarray = false;	// true for an array false for an object
 			boolean more = true;		//stop reading immediately when false
 	        boolean found = false;		//found some tag in the path (could be the tags in the middle)
 	        boolean finaltag = false;	//found the last tag in the path
 	        int i = 0; 					//record the position in pathArr
 	        String tag = pathArr[0];	//current tag in the pathArr
-	        String curtag = "";			//tags that read from the xml file
+	        String curtag = "";			//current tag that is read from the xml file
 	        Object token;				//token read from the xml file
 
 	        while(x.more() && more) {
 	        	
-					x.skipPast("<");
+	        		/*************************************************************************
+	        		 * read through xml file and find a valid tag (which should be a String) *
+	        		 *************************************************************************/
+					
+	        		x.skipPast("<");
 					
 					if (x.more()) {
 						
@@ -58,47 +67,101 @@ class Main3{
 	                    if(x.more()) {
 	                    	
 	                    	curtag = (String) token;
-	                    	if(curtag.equals(tag)){			//the token is in our path
+	                    	
+	                    	if(curtag.equals(tag)){					//the token is in our path
 		                        found = true;				
-		                        if(i == pathArr.length-1) {
-		                            finaltag = true;		//it is the last tag in our path
-		                        }else {
-		                            finaltag = false;		//it is one of the middle tags
+		                        if(i == pathArr.length-1) {					//it is the last tag in our path (hence should not be an array)
+		                        	isarray = false;
+		                            finaltag = true;		
+		                        }else if( isNum( pathArr[i+1] ) ) {			//the tag is for an JSON array
+		                        	index = Integer.parseInt(pathArr[i+1]);		//the target index
+		                        	isarray = true;
+		                        	if( i == pathArr.length-2 ){				//this is the last tag for an JSON Array
+		                        		finaltag = true;
+		                        	}
+		                        	else{										//this is a middle tag for JSON Array
+		                        		finaltag = false;
+		                        		i+=2;
+		                        		tag = pathArr[i];
+		                        	}
+		                        }
+		                        else {										//it is one of the middle tag for JSON Object
+		                        	isarray = false;
+		                            finaltag = false;					
 		                            i++;
 		                            tag = pathArr[i];
 		                        }
-		                    }else{
-		                        found = false;				//the token is not in our path
+		                    }else{									//the token is not in our path
+		                        found = false;		
+		                        isarray = false;
 		                    }
-	                    }
-	                    	
-
-	                    
+	                    } 
 					}
 				
+					/**************************************************************
+					 * Given current token, extract the object if tag is matched, *
+					 * otherwise throw the whole object into garbage 			  *
+					 **************************************************************/
 				
-				while(x.more()) {
-					
-					if(found && finaltag){		//found the final tag in the path, process it!
-						more = false;
-                        x.skipPast("<");
-						if (x.more()) {
-							if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
-								break;
+				
+					if(!isarray) {			//this is a tag for JSONObject
+						
+						if(found && finaltag){		//found the final tag in the path, process it!
+							more = false;
+							while(x.more()) {
+		                        x.skipPast("<");
+								if (x.more()) {
+									if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
+										break;
+									}
+								}
 							}
-						}
-                    }else if(!found){			//unwanted tag, put the whole thing in garbage
-                        x.skipPast("<");
-						if (x.more()) {
+	                    }else if(!found){			//unwanted tag, put the whole thing in garbage
+	                        while(x.more()) {
+		                    	x.skipPast("<");
+		                        if (x.more()) {
+									
+									if(XML.parse(x, garbage, curtag, XMLParserConfiguration.ORIGINAL)) {
+										break;
+									}
+								}
+	                        }
+	                    }else{}						//some middle tags, just do nothing and keep looking for the next tag
+	                    	
+	                    
+					}else {					// this is a tag for JSONArray
+						
+						if(count == index && finaltag) {	//found the index, and this is the last tag in pathArr
 							
-							if(XML.parse(x, garbage, curtag, XMLParserConfiguration.ORIGINAL)) {
-								break;
+							more = false;
+							while(x.more()) {
+							x.skipPast("<");
+								if (x.more()) {
+									if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
+										break;
+									}
+								}
 							}
+						}else if(count < index) {			//not the correct index, put the whole thing in garbage
+							
+							count++;
+							while(x.more()) {
+								x.skipPast("<");
+		                        if (x.more()) {
+									
+									if(XML.parse(x, garbage, curtag, XMLParserConfiguration.ORIGINAL)) {
+										break;
+									}
+								}
+							}
+						}else if(count > index) {			//this only happens when index < 0 (illegal index!!!)
+							more = false;					//stop reading directly
 						}
-                    }else {						//some middle tags, just do nothing and keep looking for the next tag
-                    	break;
-                    }
-				}
+						else { count = 0; }					//correct index but not final tag, reset the count
+															// and keep looking for next tag
+						
+					}
+				
 			}
 	        //System.out.println(garbage.toString(4));
 	        System.out.println(jo.toString(4));
@@ -117,6 +180,16 @@ class Main3{
 		
 		
 		
+	}
+	
+	public static boolean isNum(String str) {
+		
+		try {
+			int val = Integer.parseInt(str);
+		}catch(NumberFormatException e) {
+			return false;
+		}
+		return true;
 	}
 	
 }
