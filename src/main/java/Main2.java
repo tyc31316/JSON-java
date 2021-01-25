@@ -1,11 +1,9 @@
 import org.json.*;
 
 import java.io.File;
-import java.io.Reader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.Reader;
 
 class Main2{
 
@@ -14,8 +12,6 @@ class Main2{
         XMLTokener x = new XMLTokener(reader);
         System.out.println(path.toString());
         String[] pathArr = (path.toString()).split("/");
-        ArrayList<String> numbers = new ArrayList<String>(Arrays.asList("0", "1", "2", "3", "4",
-                                                                        "5","6", "7", "8", "9"));
 
         for(int i = 0; i < pathArr.length; i++) {
             System.out.println(i + " : " + pathArr[i]);
@@ -24,26 +20,13 @@ class Main2{
         int i = 0;
         while(x.more()) {
             x.skipPast("<");
-            Object token = x.nextToken();
-
-            System.out.println("Token is " + (String)token);
-            System.out.println(pathArr[i]);
-            System.out.println(x.more());
-            x.skipPast("<");
+            System.out.println(x);
             if(x.more()) {
-                if(!token.equals(pathArr[i])) {
-                    System.out.println("not equal");
-                    System.out.println("line 29 Token is :" + token);
-                    if(XML.parse(x, jo, (String)token, XMLParserConfiguration.ORIGINAL)) {
-                        System.out.println(jo.toString(4));
-//                        break;
-                    }
-                }
-                else if(token.equals(pathArr[i]) && i < pathArr.length - 1) {
-                    System.out.println("continue!");
-                    i++;
-                }
+                XML.parse(x, jo, null, XMLParserConfiguration.ORIGINAL);
+                System.out.println(jo.toString(4));
             }
+            x.skipPast("<");
+            System.out.println(x.nextToken());
         }
 
 
