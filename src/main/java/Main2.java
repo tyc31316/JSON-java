@@ -32,14 +32,14 @@ class Main2{
             }
         }
 
-        if(jo.query(path) != null ) {
+        try {
             JSONObject query = (JSONObject) jo.query(path);
             return query;
-        }
-        else {
+        } catch (Exception ex) {
             jo = new JSONObject();
             return jo;
         }
+
     }
 
 

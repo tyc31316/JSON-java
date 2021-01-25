@@ -14,7 +14,7 @@ public class testCaseTest extends TestCase {
     public void testCase() throws FileNotFoundException {
         File xml = new File("src/main/java/a.xml");
         FileReader reader = new FileReader(xml);
-        JSONPointer pointer = new JSONPointer("/test/catalog/0/book/1");
+        JSONPointer pointer = new JSONPointer("/test/catalog/1");
 
         JSONObject jo = Main2.toJSONObject(reader, pointer);
 
