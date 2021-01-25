@@ -11,7 +11,7 @@ class Main3{
 	
 	public static void main(String[] args) {
 		
-		String pointer = "";
+		String pointer = "/test/catalog/book/3";
 		File xml = new File("a.xml");
 		FileReader reader;
 		try {
@@ -19,7 +19,10 @@ class Main3{
 			JSONObject jo = new JSONObject();
 			JSONObject garbage = new JSONObject();
 	        XMLTokener x = new XMLTokener(reader);
-
+	        if(pointer.length() == 0) {
+	        	System.out.println(jo.toString());
+	        	return;
+	        }
 			if(pointer.charAt(0) == '/') {
 				pointer = pointer.substring(1);
 			}
@@ -44,7 +47,11 @@ class Main3{
 
 	        while(x.more() && more) {
 	        	
-					x.skipPast("<");
+	        		/*************************************************************************
+	        		 * read through xml file and find a valid tag (which should be a String) *
+	        		 *************************************************************************/
+					
+	        		x.skipPast("<");
 					
 					if (x.more()) {
 						
@@ -61,42 +68,43 @@ class Main3{
 	                    	
 	                    	curtag = (String) token;
 	                    	
-	                    	if(curtag.equals(tag)){			//the token is in our path
+	                    	if(curtag.equals(tag)){					//the token is in our path
 		                        found = true;				
-		                        if(i == pathArr.length-1) {	//it is the last tag in our path
+		                        if(i == pathArr.length-1) {					//it is the last tag in our path (hence should not be an array)
 		                        	isarray = false;
 		                            finaltag = true;		
-		                        }else if( isNum( pathArr[i+1] ) ) {
-		                        	index = Integer.parseInt(pathArr[i+1]);
+		                        }else if( isNum( pathArr[i+1] ) ) {			//the tag is for an JSON array
+		                        	index = Integer.parseInt(pathArr[i+1]);		//the target index
 		                        	isarray = true;
-		                        	if( i == pathArr.length-2 ){
+		                        	if( i == pathArr.length-2 ){				//this is the last tag for an JSON Array
 		                        		finaltag = true;
 		                        	}
-		                        	else{
+		                        	else{										//this is a middle tag for JSON Array
 		                        		finaltag = false;
 		                        		i+=2;
 		                        		tag = pathArr[i];
 		                        	}
 		                        }
-		                        
-		                        else {
+		                        else {										//it is one of the middle tag for JSON Object
 		                        	isarray = false;
-		                            finaltag = false;		//it is one of the middle tags
+		                            finaltag = false;					
 		                            i++;
 		                            tag = pathArr[i];
 		                        }
-		                    }else{
-		                        found = false;				//the token is not in our path
+		                    }else{									//the token is not in our path
+		                        found = false;		
+		                        isarray = false;
 		                    }
-	                    }
-	                    	
-
-	                    
+	                    } 
 					}
 				
+					/**************************************************************
+					 * Given current token, extract the object if tag is matched, *
+					 * otherwise throw the whole object into garbage 			  *
+					 **************************************************************/
 				
 				
-					if(!isarray) {				//this is a tag for JSONObject
+					if(!isarray) {			//this is a tag for JSONObject
 						
 						if(found && finaltag){		//found the final tag in the path, process it!
 							more = false;
@@ -121,9 +129,10 @@ class Main3{
 	                    }else{}						//some middle tags, just do nothing and keep looking for the next tag
 	                    	
 	                    
-					}else {						// this is a tag for JSONArray
+					}else {					// this is a tag for JSONArray
 						
-						if(count == index && finaltag) {	//found the index, and this is the last tag (target)
+						if(count == index && finaltag) {	//found the index, and this is the last tag in pathArr
+							
 							more = false;
 							while(x.more()) {
 							x.skipPast("<");
@@ -134,6 +143,7 @@ class Main3{
 								}
 							}
 						}else if(count < index) {			//not the correct index, put the whole thing in garbage
+							
 							count++;
 							while(x.more()) {
 								x.skipPast("<");
@@ -144,10 +154,11 @@ class Main3{
 									}
 								}
 							}
-						}else if(count > index) {
-							more = false;
+						}else if(count > index) {			//this only happens when index < 0 (illegal index!!!)
+							more = false;					//stop reading directly
 						}
-						else { count = 0; }							//correct index but not final tag, keep looking for the next tag
+						else { count = 0; }					//correct index but not final tag, reset the count
+															// and keep looking for next tag
 						
 					}
 				
