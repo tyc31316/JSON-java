@@ -7,45 +7,76 @@ import java.io.Reader;
 
 class Main2{
 
+    public static boolean isNum(String str) {
+
+        try {
+            int val = Integer.parseInt(str);
+        }catch(NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+
+
     public static JSONObject toJSONObject(Reader reader, JSONPointer path) {
         JSONObject jo = new JSONObject();
         XMLTokener x = new XMLTokener(reader);
-        System.out.println(path.toString());
-        String[] pathArr = (path.toString()).split("/");
 
-        for(int i = 0; i < pathArr.length; i++) {
-            System.out.println(i + " : " + pathArr[i]);
-        }
+        // re-write parse, return a boolean value parsed
+        // change all return false/true to set parsed = true/false
 
-        int i = 0;
         while(x.more()) {
             x.skipPast("<");
-            System.out.println(x);
             if(x.more()) {
                 XML.parse(x, jo, null, XMLParserConfiguration.ORIGINAL);
-                System.out.println(jo.toString(4));
             }
-            x.skipPast("<");
-            System.out.println(x.nextToken());
         }
 
+        if(jo.query(path) != null ) {
+            JSONObject query = (JSONObject) jo.query(path);
+            return query;
+        }
+        else {
+            jo = new JSONObject();
+            return jo;
+        }
+    }
 
-//        Object query = jo.query(path);
 
-        return null;
+    public static JSONObject toJSONObject2(Reader reader, JSONPointer path) {
+        JSONObject jo = new JSONObject();
+        XMLTokener x = new XMLTokener(reader);
+
+        // re-write parse, return a boolean value parsed
+        // change all return false/true to set parsed = true/false
+
+        while(x.more()) {
+            x.skipPast("<");
+            if(x.more()) {
+                XML.parseTwo(x, jo, null, "to", false, XMLParserConfiguration.ORIGINAL);
+            }
+        }
+
+        try {
+            JSONObject query = (JSONObject)jo.query(path);
+            return query;
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static void main(String[] args) {
 
         try {
-//            String pointer = "/test/catalog";
             File xml = new File("simpleXML.xml");
             FileReader reader = new FileReader(xml);
-            JSONPointer pointer = new JSONPointer("/note/to");
+            JSONPointer pointer = new JSONPointer("/note/to/random/0");
 
             JSONObject jo = toJSONObject(reader, pointer);
-//
-//
+
+
+
 //            JSONObject jo = new JSONObject();
 //            JSONObject garbage = new JSONObject();
 //            XMLTokener x = new XMLTokener(reader);
