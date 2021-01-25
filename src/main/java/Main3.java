@@ -11,8 +11,8 @@ class Main3{
 	
 	public static void main(String[] args) {
 		
-		String pointer = "/test/catalog/1/book/0";
-		File xml = new File("a.xml");
+		String pointer = "/note/random/2/h5";
+		File xml = new File("simpleXML.xml");
 		FileReader reader;
 		try {
 			reader = new FileReader(xml);

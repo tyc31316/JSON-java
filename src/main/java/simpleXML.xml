@@ -1,10 +1,21 @@
 <note>
-    <to>
-        <random>Tove</random>
-    </to>
-    <from>Jani</from>
-    <heading>Reminder</heading>
-    <body>Don't forget me this weekend!</body>
+    <random>
+        <h1>ahah</h1>
+        <h2>jjh</h2>
+    </random>
+    <random>
+        <h3>yo</h3>
+        <h4>lo</h4>
+    </random>
+
+    <random>
+        <h5>
+            <wait>jksljd</wait>
+            <stop>jshgdkf</stop>
+        </h5>
+        <h6>ho</h6>
+    </random>
+
 </note>
 <hello>sjkdh</hello>
 <hi>hkjfh</hi>
