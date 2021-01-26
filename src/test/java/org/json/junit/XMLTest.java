@@ -1175,41 +1175,38 @@ public class XMLTest {
     }
     
     @Test
-    public void test2typeExtract(){
+    public void testSimpleExtract(){
         try {
-        	InputStream xmlStream1 = null;
-            InputStream xmlStream2 = null;
+            InputStream xmlStream = null;
             try {
-                xmlStream1 = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
-                Reader xmlReader1 = new InputStreamReader(xmlStream1);
-                xmlStream2 = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
-                Reader xmlReader2 = new InputStreamReader(xmlStream2);
-                
-                JSONObject actual = XML.toJSONObject1(xmlReader1, new JSONPointer("/Name"));
-                JSONObject actual2 = XML.toJSONObject0(xmlReader2, new JSONPointer("/Name"));
-                
+                xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
+                Reader xmlReader = new InputStreamReader(xmlStream);
+                JSONObject actual = XML.toJSONObject1(xmlReader, new JSONPointer("/test/catalog/0/book/5"));
+                //System.out.println(actual.toString(4));
                 InputStream jsonStream = null;
                 try {
-                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_extract1.json");
+                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_extract0.json");
                     Scanner jsonReader = new Scanner (jsonStream);
                     StringBuilder builder = new StringBuilder();
                     while(jsonReader.hasNext()) {
                     	builder.append(jsonReader.nextLine());
                     }
                     final JSONObject expected = new JSONObject(builder.toString());
-                    Util.compareActualVsExpectedJsonObjects(actual,actual2);
+                    //System.out.println(expected.toString(4));
+                    Util.compareActualVsExpectedJsonObjects(actual,expected);
                 } finally {
                     if (jsonStream != null) {
                         jsonStream.close();
                     }
                 }
             } finally {
-                if (xmlStream1 != null) {
-                    xmlStream1.close();
+                if (xmlStream != null) {
+                    xmlStream.close();
                 }
             }
         } catch (IOException e) {
             fail("file writer error: " +e.getMessage());
         }
     }
+    
 }
