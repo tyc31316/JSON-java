@@ -1,20 +1,110 @@
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONPointer;
 import org.json.XML;
 import org.json.XMLParserConfiguration;
 import org.json.XMLTokener;
+//import org.json.junit.Util;
+//import org.json.junit.XMLTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 //import java.util.*;
+import java.util.Scanner;
 
 class Main{
 	
+public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
+    	
+    	JSONObject jo = XML.toJSONObject(reader);
+    	String pointer = path.toString();
+    	
+    	if(pointer.charAt(0) == '/') {
+			pointer = pointer.substring(1);
+		}
+		pointer = pointer.replace("/", " ");
+		String[] pathArr = pointer.split("\\s+");
+		//System.out.println(pathArr.length);
+		if( pathArr.length == 0)
+			return jo;
+    	
+		JSONObject tempob = jo; 			//temporary object for iteration
+        JSONArray tempar = new JSONArray(); //temporary array for iteration
+        boolean type = true; 				//true for object false for array
+        int n = pathArr.length;
+        for(int i = 0 ; i < n-1 ; i++){
+        	System.out.println(i);
+            if(type){
+                if(tempob.opt(pathArr[i]) instanceof JSONObject){
+                    tempob = (JSONObject)tempob.opt(pathArr[i]);
+                }else if(tempob.opt(pathArr[i]) instanceof JSONArray){
+                    tempar =(JSONArray) tempob.opt(pathArr[i]);
+                    type = false;
+                }else{
+                	
+                    return jo;
+                }
+            }else{
+                if(tempar.opt(Integer.parseInt(pathArr[i])) instanceof JSONObject){
+                    tempob = (JSONObject) tempar.opt(Integer.parseInt(pathArr[i]));
+                    type = true;
+                }else if(tempar.opt(Integer.parseInt(pathArr[i])) instanceof JSONArray){
+                    tempar = (JSONArray) tempar.opt(Integer.parseInt(pathArr[i]));
+                }else{
+                    
+                    return jo;
+                }
+            }
+        }
+        if(type){
+        	//System.out.println("!");
+        	System.out.println(pathArr[n-1]);
+        	System.out.println(tempob.toString(4));
+            if(tempob.opt(pathArr[n-1]) != null) {
+            	//System.out.println("!");
+                tempob.put(pathArr[n-1],replacement);
+            }
+        }
+        else{
+            if(tempar.opt(Integer.parseInt(pathArr[n-1])) != null)
+                tempar.put(Integer.parseInt(pathArr[n-1]),replacement);
+        }
+		
+    	return jo;
+    }
+	
 	public static void main(String[] args) {
 		
+		
+        //System.out.println(actual);
+        //InputStream jsonStream = null;
+        try {
+        	File xml = new File("a.xml");
+    		FileReader xmlReader = new FileReader (xml);
+    		JSONObject actual = toJSONObject(xmlReader, new JSONPointer("/test/catalog"), new JSONObject("{\"a\":\"b\"}"));
+    		//System.out.println(actual.toString(4));
+    		File json = new File("a_replace1.json");
+            Scanner jsonReader = new Scanner (json);
+            StringBuilder builder = new StringBuilder();
+            while(jsonReader.hasNext()) {
+            	builder.append(jsonReader.nextLine());
+            }
+            //JSONObject ex
+            final JSONObject expected = new JSONObject(builder.toString());
+            //System.out.println(expected);
+            //System.out.println(actual);
+            //AssertEquals(actual,expected);
+            //Util.compareActualVsExpectedJsonObjects(actual,expected);
+        } catch(FileNotFoundException e) {}
+		
+		/*
 		String pointer = "/catalog";
 		List<Integer> tagofarray = new ArrayList();
 		File xml = new File("a.xml");
@@ -103,7 +193,7 @@ class Main{
 		}catch(NumberFormatException e) {
 			return false;
 		}
-		return true;
+		return true;*/
 	}
 	
 	

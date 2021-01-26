@@ -923,7 +923,36 @@ public class XML {
         return toJSONObject(new StringReader(string), config);
     }
     
-    public static JSONObject toJSONObject(Reader reader, JSONPointer path) {
+    public static JSONObject toJSONObject0(Reader reader, JSONPointer path) {
+        
+    	JSONObject jo = new JSONObject();
+        XMLTokener x = new XMLTokener(reader);
+
+        // re-write parse, return a boolean value parsed
+        // change all return false/true to set parsed = true/false
+
+        while(x.more()) {
+            x.skipPast("<");
+            if(x.more()) {
+                XML.parse(x, jo, null, XMLParserConfiguration.ORIGINAL);
+                //System.out.println("~~~"+jo.toString(4));
+            }
+        }
+
+        try {
+        	//System.out.println("!");
+        	//System.out.println("~~~"+jo.toString(4));
+            JSONObject query = (JSONObject) jo.query(path);
+            //System.out.println("!");
+            //System.out.println("~~~"+jo.toString(4));
+            return query;
+        } catch (Exception ex) {
+            jo = new JSONObject();
+            return jo;
+        }
+
+    }
+    /*public static JSONObject toJSONObject0(Reader reader, JSONPointer path) {
     	
     	XMLTokener x = new XMLTokener(reader);	//to read xml file
     	String pointer = path.toString();		//make the pointer to be a String
@@ -932,7 +961,7 @@ public class XML {
     	 * parse the pointer into array of String (tags) *
     	 *************************************************/
         
-        if(pointer.charAt(0) == '/') {
+       /* if(pointer.charAt(0) == '/') {
 			pointer = pointer.substring(1);
 		}
 		pointer = pointer.replace("/", " ");
@@ -948,7 +977,7 @@ public class XML {
 		 * use XML.parse function to extract the sub object  *
 		 *****************************************************/
 		
-		boolean found = false;				//true if found the target tag (last tag) in the pointer
+		/*boolean found = false;				//true if found the target tag (last tag) in the pointer
         boolean more = true;	 			//true if there are more tags to read
         int i = 0; 							//record the position in pathArr in order to find the target tag (last tag)
         String tag = pathArr[0]; 			//start with first tag in pointer
@@ -991,9 +1020,188 @@ public class XML {
 		}
 		
     	return jo;
+    }*/
+    
+    public static JSONObject toJSONObject1(Reader reader, JSONPointer path) {
+    	
+    	
+    	String pointer = path.toString();		//make the pointer to be a String
+    	JSONObject jo = new JSONObject();
+		JSONObject garbage = new JSONObject();
+		XMLTokener x = new XMLTokener(reader);	//to read xml file
+    	
+    	/*************************************************
+    	 * parse the pointer into array of String (tags) *
+    	 *************************************************/
+        
+    	if(pointer.length() == 0) {
+        	//System.out.println(jo.toString());
+        	return jo;
+        }
+    	
+        if(pointer.charAt(0) == '/') {
+			pointer = pointer.substring(1);
+		}
+		pointer = pointer.replace("/", " ");
+		String[] pathArr = pointer.split("\\s+");
+		
+		if(pathArr.length == 0)				//trivial case
+			return toJSONObject(reader);	//return the whole JSON object
+		
+		/*****************************************************
+		 * start reading xml file and looking for target tag *
+		 * use XML.parse function to extract the sub object  *
+		 *****************************************************/
+		
+		
+		int index = -1;				//record the index of JSONArray in the path
+		int count = 0;				//count to see if index is reached or not
+		boolean isarray = false;	// true for an array false for an object
+		boolean more = true;		//stop reading immediately when false
+        boolean found = false;		//found some tag in the path (could be the tags in the middle)
+        boolean finaltag = false;	//found the last tag in the path
+        int i = 0; 					//record the position in pathArr
+        String tag = pathArr[0];	//current tag in the pathArr
+        String curtag = "";			//current tag that is read from the xml file
+        Object token;				//token read from the xml file
+
+        while(x.more() && more) {
+        	
+        		/*************************************************************************
+        		 * read through xml file and find a valid tag (which should be a String) *
+        		 *************************************************************************/
+
+        		x.skipPast("<");
+
+				if (x.more()) {
+
+					// find the token that IS a String
+					token = x.nextToken();
+					while(!(token instanceof String) && x.more()){
+						x.skipPast("<");
+						if(x.more())
+							token = x.nextToken();
+					}
+
+					//check if the token match our tag in path
+                    if(x.more()) {
+
+                    	curtag = (String) token;
+
+                    	if(curtag.equals(tag)){					//the token is in our path
+	                        found = true;
+	                        if(i == pathArr.length-1) {					//it is the last tag in our path (hence should not be an array)
+	                        	isarray = false;
+	                            finaltag = true;
+	                        }else if( isNum( pathArr[i+1] ) ) {			//the tag is for an JSON array
+	                        	index = Integer.parseInt(pathArr[i+1]);		//the target index
+	                        	isarray = true;
+	                        	if( i == pathArr.length-2 ){				//this is the last tag for an JSON Array
+	                        		finaltag = true;
+	                        	}
+	                        	else{										//this is a middle tag for JSON Array
+	                        		
+	                        		finaltag = false;
+	                        		//i+=2;
+	                        		//tag = pathArr[i];
+	                        	}
+	                        }
+	                        else {										//it is one of the middle tag for JSON Object
+	                        	isarray = false;
+	                            finaltag = false;
+	                            i++;
+	                            tag = pathArr[i];
+	                        }
+	                    }else{									//the token is not in our path
+	                        found = false;
+	                        isarray = false;
+	                    }
+                    }
+				}
+
+				/**************************************************************
+				 * Given current token, extract the object if tag is matched, *
+				 * otherwise throw the whole object into garbage 			  *
+				 **************************************************************/
+
+
+				if(!isarray) {			//this is a tag for JSONObject
+					//System.out.println("1 "+curtag);
+					if(found && finaltag){		//found the final tag in the path, process it!
+						more = false;
+						while(x.more()) {
+	                        x.skipPast("<");
+							if (x.more()) {
+								if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
+									break;
+								}
+							}
+						}
+                    }else if(!found){			//unwanted tag, put the whole thing in garbage
+                        while(x.more()) {
+	                    	x.skipPast("<");
+	                        if (x.more()) {
+
+								if(XML.parse(x, garbage, curtag, XMLParserConfiguration.ORIGINAL)) {
+									break;
+								}
+							}
+                        }
+                    }else{}						//some middle tags, just do nothing and keep looking for the next tag
+
+
+				}else {					// this is a tag for JSONArray
+					//System.out.println(curtag);
+					if(count == index && finaltag) {	//found the index, and this is the last tag in pathArr
+
+						more = false;
+						while(x.more()) {
+							x.skipPast("<");
+							if (x.more()) {
+								if(XML.parse(x, jo, curtag, XMLParserConfiguration.ORIGINAL)) {
+									break;
+								}
+							}
+						}
+					}else if(count < index) {			//not the correct index, put the whole thing in garbage
+
+						count++;
+						while(x.more()) {
+							x.skipPast("<");
+	                        if (x.more()) {
+
+								if(XML.parse(x, garbage, curtag, XMLParserConfiguration.ORIGINAL)) {
+									break;
+								}
+							}
+						}
+					}else if(count > index) {			//this only happens when index < 0 (illegal index!!!)
+						more = false;					//stop reading directly
+					}
+					else { 								//correct index but not final tag, reset the count
+						count = 0;						// and keep looking for next tag
+						i +=2;
+						tag = pathArr[i]; 
+					}					
+														
+
+				}
+
+		}
+        return jo;
     }
     
-    static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
+    private static boolean isNum(String str) {
+		
+		try {
+			int val = Integer.parseInt(str);
+		}catch(NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+    
+    public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
     	
     	JSONObject jo = XML.toJSONObject(reader);
     	String pointer = path.toString();
@@ -1011,7 +1219,8 @@ public class XML {
         JSONArray tempar = new JSONArray(); //temporary array for iteration
         boolean type = true; 				//true for object false for array
         int n = pathArr.length;
-        for(int i = 1 ; i < n-1 ; i++){
+        for(int i = 0 ; i < n-1 ; i++){
+        	
             if(type){
                 if(tempob.opt(pathArr[i]) instanceof JSONObject){
                     tempob = (JSONObject)tempob.opt(pathArr[i]);
@@ -1024,10 +1233,10 @@ public class XML {
                 }
             }else{
                 if(tempar.opt(Integer.parseInt(pathArr[i])) instanceof JSONObject){
-                    tempob = (JSONObject) tempob.opt(pathArr[i]);
+                    tempob = (JSONObject) tempar.opt(Integer.parseInt(pathArr[i]));
                     type = true;
                 }else if(tempar.opt(Integer.parseInt(pathArr[i])) instanceof JSONArray){
-                    tempar = (JSONArray) tempob.opt(pathArr[i]);
+                    tempar = (JSONArray) tempar.opt(Integer.parseInt(pathArr[i]));
                 }else{
                     
                     return jo;

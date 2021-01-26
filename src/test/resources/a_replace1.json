@@ -1,0 +1,18 @@
+{
+    "Active": true,
+    "Details": "asdf",
+    "test": {"catalog": {"a": "b"}},
+    "ID": 1,
+    "Fees": {"date": [
+        1000.21,
+        1000.21,
+        1000.21
+    ]},
+    "Name": {
+        "numver": "aaa",
+        "ha": [
+            {"pj": "oh"},
+            {"hehe": "asdasd"}
+        ]
+    }
+}

@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -40,10 +41,12 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONPointer;
 import org.json.JSONTokener;
 import org.json.XML;
 import org.json.XMLParserConfiguration;
@@ -1067,5 +1070,146 @@ public class XMLTest {
             });
             fail("Expected to be unable to modify the config");
         } catch (Exception ignored) { }
+    }
+    
+    @Test
+    public void testReplace(){
+        try {
+            InputStream xmlStream = null;
+            try {
+                xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
+                Reader xmlReader = new InputStreamReader(xmlStream);
+                JSONObject actual = XML.toJSONObject(xmlReader, new JSONPointer("/test/catalog/"), new JSONObject("{\"a\":\"b\"}"));
+                //System.out.println(actual.toString(4));
+                InputStream jsonStream = null;
+                try {
+                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_replace1.json");
+                    Scanner jsonReader = new Scanner (jsonStream);
+                    StringBuilder builder = new StringBuilder();
+                    while(jsonReader.hasNext()) {
+                    	builder.append(jsonReader.nextLine());
+                    }
+                    final JSONObject expected = new JSONObject(builder.toString());
+                    Util.compareActualVsExpectedJsonObjects(actual,expected);
+                } finally {
+                    if (jsonStream != null) {
+                        jsonStream.close();
+                    }
+                }
+            } finally {
+                if (xmlStream != null) {
+                    xmlStream.close();
+                }
+            }
+        } catch (IOException e) {
+            fail("file writer error: " +e.getMessage());
+        }
+    }
+    
+    @Test
+    public void testReplaceWithArray(){
+        try {
+            InputStream xmlStream = null;
+            try {
+                xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
+                Reader xmlReader = new InputStreamReader(xmlStream);
+                JSONObject actual = XML.toJSONObject(xmlReader, new JSONPointer("/test/catalog/0/book/3"), new JSONObject("{\"three body\":\"episode 3\"}"));
+                //System.out.println(actual.toString(4));
+                InputStream jsonStream = null;
+                try {
+                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_replace2.json");
+                    Scanner jsonReader = new Scanner (jsonStream);
+                    StringBuilder builder = new StringBuilder();
+                    while(jsonReader.hasNext()) {
+                    	builder.append(jsonReader.nextLine());
+                    }
+                    final JSONObject expected = new JSONObject(builder.toString());
+                    Util.compareActualVsExpectedJsonObjects(actual,expected);
+                } finally {
+                    if (jsonStream != null) {
+                        jsonStream.close();
+                    }
+                }
+            } finally {
+                if (xmlStream != null) {
+                    xmlStream.close();
+                }
+            }
+        } catch (IOException e) {
+            fail("file writer error: " +e.getMessage());
+        }
+    }
+    
+    @Test
+    public void testReplaceInvalidPath(){
+        try {
+            InputStream xmlStream = null;
+            try {
+                xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
+                Reader xmlReader = new InputStreamReader(xmlStream);
+                JSONObject actual = XML.toJSONObject(xmlReader, new JSONPointer("/test/cataloooog/0/book/3"), new JSONObject("{\"three body\":\"episode 3\"}"));
+                //System.out.println(actual.toString(4));
+                InputStream jsonStream = null;
+                try {
+                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_replace3.json");
+                    Scanner jsonReader = new Scanner (jsonStream);
+                    StringBuilder builder = new StringBuilder();
+                    while(jsonReader.hasNext()) {
+                    	builder.append(jsonReader.nextLine());
+                    }
+                    final JSONObject expected = new JSONObject(builder.toString());
+                    Util.compareActualVsExpectedJsonObjects(actual,expected);
+                } finally {
+                    if (jsonStream != null) {
+                        jsonStream.close();
+                    }
+                }
+            } finally {
+                if (xmlStream != null) {
+                    xmlStream.close();
+                }
+            }
+        } catch (IOException e) {
+            fail("file writer error: " +e.getMessage());
+        }
+    }
+    
+    @Test
+    public void test2typeExtract(){
+        try {
+        	InputStream xmlStream1 = null;
+            InputStream xmlStream2 = null;
+            try {
+                xmlStream1 = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
+                Reader xmlReader1 = new InputStreamReader(xmlStream1);
+                xmlStream2 = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
+                Reader xmlReader2 = new InputStreamReader(xmlStream2);
+                
+                JSONObject actual = XML.toJSONObject1(xmlReader1, new JSONPointer("/Name"));
+                JSONObject actual2 = XML.toJSONObject0(xmlReader2, new JSONPointer("/Name"));
+                
+                InputStream jsonStream = null;
+                try {
+                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_extract1.json");
+                    Scanner jsonReader = new Scanner (jsonStream);
+                    StringBuilder builder = new StringBuilder();
+                    while(jsonReader.hasNext()) {
+                    	builder.append(jsonReader.nextLine());
+                    }
+                    final JSONObject expected = new JSONObject(builder.toString());
+                    Util.compareActualVsExpectedJsonObjects(actual,actual2);
+                } finally {
+                    if (jsonStream != null) {
+                        jsonStream.close();
+                    }
+                }
+            } finally {
+                if (xmlStream1 != null) {
+                    xmlStream1.close();
+                }
+            }
+        } catch (IOException e) {
+            fail("file writer error: " +e.getMessage());
+        }
     }
 }
