@@ -106,7 +106,7 @@ class Main3{
 
 
 					if(!isarray) {			//this is a tag for JSONObject
-						System.out.println("1 "+curtag);
+						//System.out.println("1 "+curtag);
 						if(found && finaltag){		//found the final tag in the path, process it!
 							more = false;
 							while(x.more()) {
@@ -131,7 +131,7 @@ class Main3{
 
 
 					}else {					// this is a tag for JSONArray
-						System.out.println(curtag);
+						//System.out.println(curtag);
 						if(count == index && finaltag) {	//found the index, and this is the last tag in pathArr
 
 							more = false;
@@ -158,12 +158,12 @@ class Main3{
 						}else if(count > index) {			//this only happens when index < 0 (illegal index!!!)
 							more = false;					//stop reading directly
 						}
-						else { 
-							count = 0;
+						else { 								//correct index but not final tag, reset the count
+							count = 0;						// and keep looking for next tag
 							i +=2;
 							tag = pathArr[i]; 
-						}									//correct index but not final tag, reset the count
-															// and keep looking for next tag
+						}					
+															
 
 					}
 
