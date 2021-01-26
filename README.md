@@ -1,3 +1,48 @@
+JSON in Java [package org.json] - ver. 2.0
+
+Version 2.0 includes the following additional method:
+    
+1) XML.java [line 926 -> 946]:
+    toJSONObject1(Reader reader, JSONPointer path)
+    
+         - This method converts the given XML, extracts and returns the corresponding JSONObject in the specified JSONPointer path.
+         - This method returns the specified JSONObject.
+         - This version is efficient but can potentially have minor issues.
+        
+2) XML.java [line 949 -> 1108]:
+    toJSONObject0(Reader reader, JSONPointer path)
+    
+        - This method returns specified JSONObject.
+        - This version is an inefficient XML to JSONObject converting method yet ensures correct output with correct JSONPointer path.
+
+3) XML.java [line 1125 -> 1177]:
+    toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)
+    
+        - This method takes a reader, a desired sub-object within the XML indicated by JSONPointer path, and replace with another given JSONObject.
+        - This method returns the entire XML as a JSONObject with replaced sub-object.
+
+
+JUnit tests set up
+
+1) Testing toJSONObject(Reader reader, JSONPointer path, JSONObject replacement):
+
+        1) testReplace() ----- XMLTest.java [line 1056 -> 1088]
+        2) testReplaceWithArray() ----- XMLTest.java [line 1090 -> 1122]
+        3) testReplaceWithInvalidPath() ----- XMLTest.java [line 1124 -> 1156]
+
+2) Testin toJSONObject0 (Reader reader, JSONPointer path):
+    
+        1) testExtractNestedObjectInArray() ----- XMLTest.java [line 1263 -> 1296]
+        2) testPathWithoutIndex() ----- XMLTest.java [line 1298 -> 1331]
+
+3) Testing toJSONObject1(Reader reader, JSONPointer path):
+
+        1) testSimpleExtract() ----- XMLTest.java [line 1158 -> 1191]
+        2) testExtractingNestedObject ----- XMLTest.java [line 1193 -> 1226]
+        3) testInvalidPointer ----- XMLTest.java [line 1228 -> 1261]
+
+
+
 JSON in Java [package org.json]
 ===============================
 

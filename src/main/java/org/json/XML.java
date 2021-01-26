@@ -928,23 +928,15 @@ public class XML {
     	JSONObject jo = new JSONObject();
         XMLTokener x = new XMLTokener(reader);
 
-        // re-write parse, return a boolean value parsed
-        // change all return false/true to set parsed = true/false
-
         while(x.more()) {
             x.skipPast("<");
             if(x.more()) {
                 XML.parse(x, jo, null, XMLParserConfiguration.ORIGINAL);
-                //System.out.println("~~~"+jo.toString(4));
             }
         }
 
         try {
-        	//System.out.println("!");
-        	//System.out.println("~~~"+jo.toString(4));
             JSONObject query = (JSONObject) jo.query(path);
-            //System.out.println("!");
-            //System.out.println("~~~"+jo.toString(4));
             return query;
         } catch (Exception ex) {
             jo = new JSONObject();
@@ -952,76 +944,8 @@ public class XML {
         }
 
     }
-    /*public static JSONObject toJSONObject0(Reader reader, JSONPointer path) {
-    	
-    	XMLTokener x = new XMLTokener(reader);	//to read xml file
-    	String pointer = path.toString();		//make the pointer to be a String
-    	
-    	/*************************************************
-    	 * parse the pointer into array of String (tags) *
-    	 *************************************************/
-        
-       /* if(pointer.charAt(0) == '/') {
-			pointer = pointer.substring(1);
-		}
-		pointer = pointer.replace("/", " ");
-		String[] pathArr = pointer.split("\\s+");
-		
-		if(pathArr.length == 0)				//trivial case
-			return toJSONObject(reader);	//return the whole JSON object
-		
-		
-		
-		/*****************************************************
-		 * start reading xml file and looking for target tag *
-		 * use XML.parse function to extract the sub object  *
-		 *****************************************************/
-		
-		/*boolean found = false;				//true if found the target tag (last tag) in the pointer
-        boolean more = true;	 			//true if there are more tags to read
-        int i = 0; 							//record the position in pathArr in order to find the target tag (last tag)
-        String tag = pathArr[0]; 			//start with first tag in pointer
-        JSONObject jo = new JSONObject(); 	//the json object to be returned
-        
-        
-        while(x.more()) {
-			while (x.more()) {
-				x.skipPast("<");
-				if (x.more()) {
-					
-					if (x.nextToken().equals(tag)) {
-						
-						if(i == pathArr.length-1) {	//found the last tag!
-							found = true;
-							break;
-						}else {
-							i++;
-							tag = pathArr[i];
-						}
-					}else if(found) {				//target tag already found and read
-						more = false;				//can stop reading
-						break;						
-					}
-				}
-			}
-			if(!more)
-				break;
-			while(x.more()) {
-				if (found) {
-					x.skipPast("<");
-					if (x.more()) {
-						if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
-							break;
-						}
-						
-					}
-				}
-			}
-		}
-		
-    	return jo;
-    }*/
-    
+
+
     public static JSONObject toJSONObject1(Reader reader, JSONPointer path) {
     	
     	
@@ -1035,7 +959,6 @@ public class XML {
     	 *************************************************/
         
     	if(pointer.length() == 0) {
-        	//System.out.println(jo.toString());
         	return jo;
         }
     	
@@ -1102,8 +1025,6 @@ public class XML {
 	                        	else{										//this is a middle tag for JSON Array
 	                        		
 	                        		finaltag = false;
-	                        		//i+=2;
-	                        		//tag = pathArr[i];
 	                        	}
 	                        }
 	                        else {										//it is one of the middle tag for JSON Object
@@ -1126,7 +1047,6 @@ public class XML {
 
 
 				if(!isarray) {			//this is a tag for JSONObject
-					//System.out.println("1 "+curtag);
 					if(found && finaltag){		//found the final tag in the path, process it!
 						more = false;
 						while(x.more()) {
@@ -1151,7 +1071,6 @@ public class XML {
 
 
 				}else {					// this is a tag for JSONArray
-					//System.out.println(curtag);
 					if(count == index && finaltag) {	//found the index, and this is the last tag in pathArr
 
 						more = false;
@@ -1182,15 +1101,16 @@ public class XML {
 						count = 0;						// and keep looking for next tag
 						i +=2;
 						tag = pathArr[i]; 
-					}					
-														
-
+					}
 				}
-
 		}
         return jo;
     }
-    
+
+
+    /*
+        A helper method to check if the current string can be parsed into number
+     */
     private static boolean isNum(String str) {
 		
 		try {
@@ -1200,7 +1120,8 @@ public class XML {
 		}
 		return true;
 	}
-    
+
+
     public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
     	
     	JSONObject jo = XML.toJSONObject(reader);

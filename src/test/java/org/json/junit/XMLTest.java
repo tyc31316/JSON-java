@@ -24,36 +24,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.json.*;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONPointer;
-import org.json.JSONTokener;
-import org.json.XML;
-import org.json.XMLParserConfiguration;
-import org.json.XMLXsiTypeConverter;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.Assert.*;
 
 
 /**
@@ -1181,11 +1162,11 @@ public class XMLTest {
             try {
                 xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
                 Reader xmlReader = new InputStreamReader(xmlStream);
-                JSONObject actual = XML.toJSONObject1(xmlReader, new JSONPointer("/test/catalog/0/book/5"));
-                //System.out.println(actual.toString(4));
+                JSONObject actual = XML.toJSONObject1(xmlReader, new JSONPointer("/test"));
+//                System.out.println(actual.toString(4));
                 InputStream jsonStream = null;
                 try {
-                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_extract0.json");
+                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_extract1.json");
                     Scanner jsonReader = new Scanner (jsonStream);
                     StringBuilder builder = new StringBuilder();
                     while(jsonReader.hasNext()) {
@@ -1208,5 +1189,147 @@ public class XMLTest {
             fail("file writer error: " +e.getMessage());
         }
     }
+
+    @Test
+    public void testExtractingNestedObject(){
+        try {
+            InputStream xmlStream = null;
+            try {
+                xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
+                Reader xmlReader = new InputStreamReader(xmlStream);
+                JSONObject actual = XML.toJSONObject1(xmlReader, new JSONPointer("/test/catalog/0/book/5"));
+//                System.out.println(actual.toString(4));
+                InputStream jsonStream = null;
+                try {
+                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_extract0.json");
+                    Scanner jsonReader = new Scanner (jsonStream);
+                    StringBuilder builder = new StringBuilder();
+                    while(jsonReader.hasNext()) {
+                        builder.append(jsonReader.nextLine());
+                    }
+                    final JSONObject expected = new JSONObject(builder.toString());
+                    //System.out.println(expected.toString(4));
+                    Util.compareActualVsExpectedJsonObjects(actual,expected);
+                } finally {
+                    if (jsonStream != null) {
+                        jsonStream.close();
+                    }
+                }
+            } finally {
+                if (xmlStream != null) {
+                    xmlStream.close();
+                }
+            }
+        } catch (IOException e) {
+            fail("file writer error: " +e.getMessage());
+        }
+    }
+
+    @Test
+    public void testInvalidPointer(){
+        try {
+            InputStream xmlStream = null;
+            try {
+                xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
+                Reader xmlReader = new InputStreamReader(xmlStream);
+                JSONObject actual = XML.toJSONObject1(xmlReader, new JSONPointer("/test/book"));
+//                System.out.println(actual.toString(4));
+                InputStream jsonStream = null;
+                try {
+                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_emptyJSONObj.json");
+                    Scanner jsonReader = new Scanner (jsonStream);
+                    StringBuilder builder = new StringBuilder();
+                    while(jsonReader.hasNext()) {
+                        builder.append(jsonReader.nextLine());
+                    }
+                    final JSONObject expected = new JSONObject(builder.toString());
+                    //System.out.println(expected.toString(4));
+                    Util.compareActualVsExpectedJsonObjects(actual,expected);
+                } finally {
+                    if (jsonStream != null) {
+                        jsonStream.close();
+                    }
+                }
+            } finally {
+                if (xmlStream != null) {
+                    xmlStream.close();
+                }
+            }
+        } catch (IOException e) {
+            fail("file writer error: " +e.getMessage());
+        }
+    }
+
+    @Test
+    public void testExtractNestedObjectInArray(){
+        try {
+            InputStream xmlStream = null;
+            try {
+                xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("books_short.xml");
+                Reader xmlReader = new InputStreamReader(xmlStream);
+                JSONObject actual = XML.toJSONObject0(xmlReader, new JSONPointer("/test/catalog/0/book/0"));
+//                System.out.println(actual.toString(4));
+                InputStream jsonStream = null;
+                try {
+                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("books_extract1.json");
+                    Scanner jsonReader = new Scanner (jsonStream);
+                    StringBuilder builder = new StringBuilder();
+                    while(jsonReader.hasNext()) {
+                        builder.append(jsonReader.nextLine());
+                    }
+                    final JSONObject expected = new JSONObject(builder.toString());
+//                    System.out.println(expected.toString(4));
+                    Util.compareActualVsExpectedJsonObjects(actual,expected);
+                } finally {
+                    if (jsonStream != null) {
+                        jsonStream.close();
+                    }
+                }
+            } finally {
+                if (xmlStream != null) {
+                    xmlStream.close();
+                }
+            }
+        } catch (IOException e) {
+            fail("file writer error: " +e.getMessage());
+        }
+    }
+
+    @Test
+    public void testPathWithoutIndex(){
+        try {
+            InputStream xmlStream = null;
+            try {
+                xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("books_short.xml");
+                Reader xmlReader = new InputStreamReader(xmlStream);
+                JSONObject actual = XML.toJSONObject0(xmlReader, new JSONPointer("/test/catalog/book/0"));
+//                System.out.println(actual.toString(4));
+                InputStream jsonStream = null;
+                try {
+                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_emptyJSONObj.json");
+                    Scanner jsonReader = new Scanner (jsonStream);
+                    StringBuilder builder = new StringBuilder();
+                    while(jsonReader.hasNext()) {
+                        builder.append(jsonReader.nextLine());
+                    }
+                    final JSONObject expected = new JSONObject(builder.toString());
+//                    System.out.println(expected.toString(4));
+                    Util.compareActualVsExpectedJsonObjects(actual,expected);
+                } finally {
+                    if (jsonStream != null) {
+                        jsonStream.close();
+                    }
+                }
+            } finally {
+                if (xmlStream != null) {
+                    xmlStream.close();
+                }
+            }
+        } catch (IOException e) {
+            fail("file writer error: " +e.getMessage());
+        }
+    }
     
 }
+
+
