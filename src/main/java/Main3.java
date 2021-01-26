@@ -11,7 +11,7 @@ class Main3{
 	
 	public static void main(String[] args) {
 		
-		String pointer = "/note/random/2/h5";
+		String pointer = "/note/random/2/h5/";
 		File xml = new File("simpleXML.xml");
 		FileReader reader;
 		try {
@@ -80,9 +80,10 @@ class Main3{
 		                        		finaltag = true;
 		                        	}
 		                        	else{										//this is a middle tag for JSON Array
+		                        		
 		                        		finaltag = false;
-		                        		i+=2;
-		                        		tag = pathArr[i];
+		                        		//i+=2;
+		                        		//tag = pathArr[i];
 		                        	}
 		                        }
 		                        else {										//it is one of the middle tag for JSON Object
@@ -105,7 +106,7 @@ class Main3{
 
 
 					if(!isarray) {			//this is a tag for JSONObject
-
+						System.out.println("1 "+curtag);
 						if(found && finaltag){		//found the final tag in the path, process it!
 							more = false;
 							while(x.more()) {
@@ -130,14 +131,14 @@ class Main3{
 
 
 					}else {					// this is a tag for JSONArray
-
+						System.out.println(curtag);
 						if(count == index && finaltag) {	//found the index, and this is the last tag in pathArr
 
 							more = false;
 							while(x.more()) {
 								x.skipPast("<");
 								if (x.more()) {
-									if(XML.parse(x, jo, tag, XMLParserConfiguration.ORIGINAL)) {
+									if(XML.parse(x, jo, curtag, XMLParserConfiguration.ORIGINAL)) {
 										break;
 									}
 								}
@@ -157,7 +158,11 @@ class Main3{
 						}else if(count > index) {			//this only happens when index < 0 (illegal index!!!)
 							more = false;					//stop reading directly
 						}
-						else { count = 0; }					//correct index but not final tag, reset the count
+						else { 
+							count = 0;
+							i +=2;
+							tag = pathArr[i]; 
+						}									//correct index but not final tag, reset the count
 															// and keep looking for next tag
 
 					}
