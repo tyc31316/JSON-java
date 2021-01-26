@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.Stack;
 
 class Main2{
 
@@ -50,20 +51,24 @@ class Main2{
         // re-write parse, return a boolean value parsed
         // change all return false/true to set parsed = true/false
 
-        while(x.more()) {
+//        while(x.more()) {
             x.skipPast("<");
             if(x.more()) {
-                XML.parseTwo(x, jo, null, "to", false, XMLParserConfiguration.ORIGINAL);
+                Stack<String> stack = new Stack<String>();
+                XML.parseTwo(x, jo, null, "catalog", false, stack, XMLParserConfiguration.ORIGINAL);
             }
-        }
+//        }
 
-        try {
-            JSONObject query = (JSONObject)jo.query(path);
-            return query;
+        System.out.println(jo.toString(4));
 
-        } catch (Exception e) {
-            return null;
-        }
+//        try {
+//            JSONObject query = (JSONObject)jo.query(path);
+//            return query;
+//
+//        } catch (Exception e) {
+//            return new JSONObject();
+//        }
+        return null;
     }
 
     public static void main(String[] args) {

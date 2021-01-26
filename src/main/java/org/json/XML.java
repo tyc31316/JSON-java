@@ -29,6 +29,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
+import java.util.Stack;
 
 
 /**
@@ -431,7 +432,7 @@ public class XML {
         }
     }
 
-    public static boolean parseTwo(XMLTokener x, JSONObject context, String name, String target, boolean targetFound, XMLParserConfiguration config)
+    public static boolean parseTwo(XMLTokener x, JSONObject context, String name, String target, boolean found, Stack<String> stack, XMLParserConfiguration config)
             throws JSONException {
         char c;
         int i;
@@ -451,6 +452,10 @@ public class XML {
         // <=
         // <<
 
+        if(found && stack.size() == 0) {
+            return true;
+        }
+
         token = x.nextToken();
 
         // <!
@@ -469,9 +474,7 @@ public class XML {
                     if (x.next() == '[') {
                         string = x.nextCDATA();
                         if (string.length() > 0) {
-                            if(targetFound) {
-                                context.accumulate(config.getcDataTagName(), string);
-                            }
+                            context.accumulate(config.getcDataTagName(), string);
                         }
                         return false;
                     }
@@ -500,6 +503,11 @@ public class XML {
             // Close tag </
 
             token = x.nextToken();
+            if(token instanceof String) {
+                if(stack.peek().equals(token)) {
+                    stack.pop();
+                }
+            }
             if (name == null) {
                 throw x.syntaxError("Mismatched close tag " + token);
             }
@@ -518,16 +526,14 @@ public class XML {
 
         } else {
             tagName = (String) token;
-            // this is the start of what we are really interested in
-            // name is the tag
+            stack.push(tagName);
             if(tagName.equals(target)) {
-                targetFound = true;
+                found = true;
             }
             token = null;
             jsonObject = new JSONObject();
             boolean nilAttributeFound = false;
             xmlXsiTypeConverter = null;
-
             for (;;) {
                 if (token == null) {
                     token = x.nextToken();
@@ -535,6 +541,7 @@ public class XML {
                 // attribute = value
                 if (token instanceof String) {
                     string = (String) token;
+                    System.out.println("Top of the stack: " + stack.peek());
                     token = x.nextToken();
                     if (token == EQ) {
                         token = x.nextToken();
@@ -549,7 +556,7 @@ public class XML {
                         } else if(config.getXsiTypeMap() != null && !config.getXsiTypeMap().isEmpty()
                                 && TYPE_ATTR.equals(string)) {
                             xmlXsiTypeConverter = config.getXsiTypeMap().get(token);
-                        } else if (!nilAttributeFound) {
+                        } else if (!nilAttributeFound && found) {
                             jsonObject.accumulate(string,
                                     config.isKeepStrings()
                                             ? ((String) token)
@@ -557,26 +564,34 @@ public class XML {
                         }
                         token = null;
                     } else {
-                        jsonObject.accumulate(string, "");
+                        if(found) {
+                            jsonObject.accumulate(string, "");
+                        }
                     }
-
 
                 } else if (token == SLASH) {
                     // Empty tag <.../>
                     if (x.nextToken() != GT) {
                         throw x.syntaxError("Misshaped tag");
                     }
-                    if (nilAttributeFound && targetFound) {
+                    if (nilAttributeFound && found) {
                         context.accumulate(tagName, JSONObject.NULL);
-                    } else if (jsonObject.length() > 0) {
+                    } else if (jsonObject.length() > 0 && found) {
                         context.accumulate(tagName, jsonObject);
                     } else {
-                        context.accumulate(tagName, "");
+                        if(found) {
+                            context.accumulate(tagName, "");
+                        }
                     }
                     return false;
 
                 } else if (token == GT) {
                     // Content, between <...> and </...>
+
+                    if(found && stack.size() == 0) {
+                        return true;
+                    }
+
                     for (;;) {
                         token = x.nextContent();
                         if (token == null) {
@@ -586,23 +601,34 @@ public class XML {
                             return false;
                         } else if (token instanceof String) {
                             string = (String) token;
+
                             if (string.length() > 0) {
                                 if(xmlXsiTypeConverter != null) {
+                                    if(found) {
+                                        jsonObject.accumulate(config.getcDataTagName(),
+                                                stringToValue(string, xmlXsiTypeConverter));
+                                    }
+                                    else {
+                                        jsonObject.put(config.getcDataTagName(),
+                                                stringToValue(string, xmlXsiTypeConverter));
+                                    }
+                                } else if (found){
                                     jsonObject.accumulate(config.getcDataTagName(),
-                                            stringToValue(string, xmlXsiTypeConverter));
-                                } else {
-                                    jsonObject.accumulate(config.getcDataTagName(),
+                                            config.isKeepStrings() ? string : stringToValue(string));
+                                }
+                                else {
+                                    jsonObject.append(config.getcDataTagName(),
                                             config.isKeepStrings() ? string : stringToValue(string));
                                 }
                             }
 
                         } else if (token == LT) {
                             // Nested element
-                            if (parseTwo(x, jsonObject, tagName, target, targetFound, config) && targetFound) {
-                                if (jsonObject.length() == 0) {
+                            if (parseTwo(x, jsonObject, tagName, target, found, stack, config)) {
+                                if (jsonObject.length() == 0 && found) {
                                     context.accumulate(tagName, "");
                                 } else if (jsonObject.length() == 1
-                                        && jsonObject.opt(config.getcDataTagName()) != null) {
+                                        && jsonObject.opt(config.getcDataTagName()) != null && found) {
                                     context.accumulate(tagName, jsonObject.opt(config.getcDataTagName()));
                                 } else {
                                     context.accumulate(tagName, jsonObject);
@@ -610,6 +636,7 @@ public class XML {
                                 return false;
                             }
                         }
+
                     }
                 } else {
                     throw x.syntaxError("Misshaped tag");

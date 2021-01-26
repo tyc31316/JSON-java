@@ -12,13 +12,13 @@ public class testCaseTest extends TestCase {
 
     @Test
     public void testCase() throws FileNotFoundException {
-        File xml = new File("src/main/java/simpleXML.xml");
+        File xml = new File("src/main/java/books_short.xml");
         FileReader reader = new FileReader(xml);
-        JSONPointer pointer = new JSONPointer("/note/random/2/h5");
+        JSONPointer pointer = new JSONPointer("/text/catalog");
 
-        JSONObject jo = Main2.toJSONObject(reader, pointer);
+        JSONObject jo = Main2.toJSONObject2(reader, pointer);
 
-        System.out.println(jo.toString(4));
+//        System.out.println(jo.toString(4));
 
     }
 }
