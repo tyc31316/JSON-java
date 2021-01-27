@@ -452,10 +452,6 @@ public class XML {
         // <=
         // <<
 
-        if(found && stack.size() == 0) {
-            return true;
-        }
-
         token = x.nextToken();
 
         // <!
@@ -504,7 +500,7 @@ public class XML {
 
             token = x.nextToken();
             if(token instanceof String) {
-                if(stack.peek().equals(token)) {
+                if(stack.size() > 0 && stack.peek().equals(token)) {
                     stack.pop();
                 }
             }
@@ -526,9 +522,9 @@ public class XML {
 
         } else {
             tagName = (String) token;
-            stack.push(tagName);
             if(tagName.equals(target)) {
                 found = true;
+                stack.push(tagName);
             }
             token = null;
             jsonObject = new JSONObject();
@@ -556,17 +552,13 @@ public class XML {
                         } else if(config.getXsiTypeMap() != null && !config.getXsiTypeMap().isEmpty()
                                 && TYPE_ATTR.equals(string)) {
                             xmlXsiTypeConverter = config.getXsiTypeMap().get(token);
-                        } else if (!nilAttributeFound && found) {
+                        } else if (!nilAttributeFound) {
                             jsonObject.accumulate(string,
                                     config.isKeepStrings()
                                             ? ((String) token)
                                             : stringToValue((String) token));
                         }
                         token = null;
-                    } else {
-                        if(found) {
-                            jsonObject.accumulate(string, "");
-                        }
                     }
 
                 } else if (token == SLASH) {
@@ -574,23 +566,17 @@ public class XML {
                     if (x.nextToken() != GT) {
                         throw x.syntaxError("Misshaped tag");
                     }
-                    if (nilAttributeFound && found) {
+                    if (nilAttributeFound) {
                         context.accumulate(tagName, JSONObject.NULL);
-                    } else if (jsonObject.length() > 0 && found) {
+                    } else if (jsonObject.length() > 0) {
                         context.accumulate(tagName, jsonObject);
                     } else {
-                        if(found) {
-                            context.accumulate(tagName, "");
-                        }
+                        context.accumulate(tagName, "");
                     }
                     return false;
 
                 } else if (token == GT) {
                     // Content, between <...> and </...>
-
-                    if(found && stack.size() == 0) {
-                        return true;
-                    }
 
                     for (;;) {
                         token = x.nextContent();
@@ -604,20 +590,10 @@ public class XML {
 
                             if (string.length() > 0) {
                                 if(xmlXsiTypeConverter != null) {
-                                    if(found) {
-                                        jsonObject.accumulate(config.getcDataTagName(),
-                                                stringToValue(string, xmlXsiTypeConverter));
-                                    }
-                                    else {
-                                        jsonObject.put(config.getcDataTagName(),
-                                                stringToValue(string, xmlXsiTypeConverter));
-                                    }
-                                } else if (found){
                                     jsonObject.accumulate(config.getcDataTagName(),
-                                            config.isKeepStrings() ? string : stringToValue(string));
-                                }
-                                else {
-                                    jsonObject.append(config.getcDataTagName(),
+                                            stringToValue(string, xmlXsiTypeConverter));
+                                } else {
+                                    jsonObject.accumulate(config.getcDataTagName(),
                                             config.isKeepStrings() ? string : stringToValue(string));
                                 }
                             }
@@ -625,15 +601,22 @@ public class XML {
                         } else if (token == LT) {
                             // Nested element
                             if (parseTwo(x, jsonObject, tagName, target, found, stack, config)) {
-                                if (jsonObject.length() == 0 && found) {
-                                    context.accumulate(tagName, "");
-                                } else if (jsonObject.length() == 1
-                                        && jsonObject.opt(config.getcDataTagName()) != null && found) {
-                                    context.accumulate(tagName, jsonObject.opt(config.getcDataTagName()));
-                                } else {
-                                    context.accumulate(tagName, jsonObject);
+                                if(!found && stack.size() == 0) {
+                                    context = jsonObject.getJSONObject("book");
+                                    System.out.println(context.toString(4));
+                                    return true;
                                 }
-                                return false;
+                                else {
+                                    if (jsonObject.length() == 0 && found) {
+                                        context.accumulate(tagName, "");
+                                    } else if (jsonObject.length() == 1
+                                            && jsonObject.opt(config.getcDataTagName()) != null && found) {
+                                        context.accumulate(tagName, jsonObject.opt(config.getcDataTagName()));
+                                    } else {
+                                        context.accumulate(tagName, jsonObject);
+                                    }
+                                    return false;
+                                }
                             }
                         }
 

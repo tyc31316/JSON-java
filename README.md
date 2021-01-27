@@ -42,6 +42,10 @@ JUnit tests set up
         3) testInvalidPointer ----- XMLTest.java [line 1228 -> 1261]
 
 
+Build
+
+    - Build script is the same as the original package
+
 
 JSON in Java [package org.json]
 ===============================

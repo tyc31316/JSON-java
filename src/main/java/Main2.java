@@ -55,11 +55,12 @@ class Main2{
             x.skipPast("<");
             if(x.more()) {
                 Stack<String> stack = new Stack<String>();
-                XML.parseTwo(x, jo, null, "catalog", false, stack, XMLParserConfiguration.ORIGINAL);
+                if(XML.parseTwo(x, jo, null, "book", false, stack, XMLParserConfiguration.ORIGINAL)) {
+//                    System.out.println(jo.toString(4));
+                }
             }
 //        }
 
-        System.out.println(jo.toString(4));
 
 //        try {
 //            JSONObject query = (JSONObject)jo.query(path);
