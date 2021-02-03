@@ -677,7 +677,7 @@ public class XML {
                 if ("CDATA".equals(token)) {
                     if (x.next() == '[') {
                         string = x.nextCDATA();
-                        if (string.length() > 0 && found) {
+                        if (string.length() > 0) {
                             context.accumulate(config.getcDataTagName(), string);
                         }
                         return false;
@@ -789,7 +789,7 @@ public class XML {
                             // only accumulate content on found (aka last) tag
                         } else if (token instanceof String && found) {
 
-                            System.out.println("last one! get the content!");
+//                            System.out.println("last one! get the content!");
 
                             string = (String) token;
                             if (string.length() > 0) {
@@ -800,9 +800,6 @@ public class XML {
                                     jsonObject.accumulate(config.getcDataTagName(),
                                             config.isKeepStrings() ? string : stringToValue(string));
                                 }
-
-                                System.out.println("JSONObject is: ");
-                                System.out.println(jsonObject.toString(4));
                             }
 
                         } else if (token == LT) {
@@ -818,7 +815,7 @@ public class XML {
                                     reducedPath += pathArray[k] + "/";
                                 }
                             }
-                            System.out.println("Reduced path: " + reducedPath);
+//                            System.out.println("Reduced path: " + reducedPath);
 
                             if (parse3(x, jsonObject, tagName, found, reducedPath, config)) {
                                 if (jsonObject.length() == 0) {
