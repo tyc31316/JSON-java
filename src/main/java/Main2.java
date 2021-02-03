@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
-import java.util.Stack;
 
 class Main2{
 
@@ -47,19 +46,26 @@ class Main2{
     public static JSONObject toJSONObject2(Reader reader, JSONPointer path) {
         JSONObject jo = new JSONObject();
         XMLTokener x = new XMLTokener(reader);
+        String paths = path.toString();
 
         // re-write parse, return a boolean value parsed
         // change all return false/true to set parsed = true/false
 
-//        while(x.more()) {
+        while(x.more()) {
             x.skipPast("<");
             if(x.more()) {
-                Stack<String> stack = new Stack<String>();
-                if(XML.parseTwo(x, jo, null, "book", false, stack, XMLParserConfiguration.ORIGINAL)) {
-//                    System.out.println(jo.toString(4));
-                }
+                XML.parse3(x, jo, null, false, paths, XMLParserConfiguration.ORIGINAL);
             }
-//        }
+        }
+        System.out.println(jo.toString(4));
+        JSONObject result = (JSONObject) jo.query(paths);
+        if(result != null) {
+            System.out.println(result.toString(4));
+        }
+        else {
+            System.out.println(new JSONObject());
+        }
+
 
 
 //        try {
