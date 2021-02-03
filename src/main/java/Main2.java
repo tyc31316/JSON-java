@@ -50,11 +50,17 @@ class Main2{
         String paths = path.toString();
 
         Stack<String> stack = new Stack<String>();
+        boolean found = false;
         while(x.more()) {
             x.skipPast("<");
             if(x.more()) {
-                XML.parse3(x, jo, null, false, paths, stack, XMLParserConfiguration.ORIGINAL);
-                if(stack.size() == 0) {
+                XML.parse3(x, jo, null, found, paths, stack, XMLParserConfiguration.ORIGINAL);
+                // thought found should be returned as true but it is not???
+                // original idea is that if found is true and stack size is 0,
+                // then we don't need to go further even if there are more tags
+                // currently still unable to do so
+                System.out.println(found);
+                if(stack.size() == 0 && found) {
                     break;
                 }
             }
