@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.Stack;
 
 class Main2{
 
@@ -48,34 +49,24 @@ class Main2{
         XMLTokener x = new XMLTokener(reader);
         String paths = path.toString();
 
-        // re-write parse, return a boolean value parsed
-        // change all return false/true to set parsed = true/false
-
+        Stack<String> stack = new Stack<String>();
         while(x.more()) {
             x.skipPast("<");
             if(x.more()) {
-                XML.parse3(x, jo, null, false, paths, XMLParserConfiguration.ORIGINAL);
+                XML.parse3(x, jo, null, false, paths, stack, XMLParserConfiguration.ORIGINAL);
+                if(stack.size() == 0) {
+                    break;
+                }
             }
         }
         System.out.println(jo.toString(4));
         JSONObject result = (JSONObject) jo.query(paths);
         if(result != null) {
-            System.out.println(result.toString(4));
+            return result;
         }
         else {
-            System.out.println(new JSONObject());
+            return new JSONObject();
         }
-
-
-
-//        try {
-//            JSONObject query = (JSONObject)jo.query(path);
-//            return query;
-//
-//        } catch (Exception e) {
-//            return new JSONObject();
-//        }
-        return null;
     }
 
     public static void main(String[] args) {

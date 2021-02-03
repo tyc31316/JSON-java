@@ -18,7 +18,7 @@ public class testCaseTest extends TestCase {
 
         JSONObject jo = Main2.toJSONObject2(reader, pointer);
 
-//        System.out.println(jo.toString(4));
+        System.out.println(jo.toString(4));
 
     }
 }

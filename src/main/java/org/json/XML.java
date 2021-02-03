@@ -629,7 +629,7 @@ public class XML {
     }
 
 
-    public static boolean parse3(XMLTokener x, JSONObject context, String name, boolean found, String paths, XMLParserConfiguration config)
+    public static boolean parse3(XMLTokener x, JSONObject context, String name, boolean found, String paths, Stack<String> stack, XMLParserConfiguration config)
             throws JSONException {
         char c;
         int i;
@@ -649,8 +649,6 @@ public class XML {
         // <=
         // <<
 
-//        System.out.println(name);
-//        System.out.println(paths);
         String[] pathArray = paths.split("/");
 //        System.out.println(Arrays.toString(pathArray));
         // if it's the last element && equals the last tag
@@ -707,6 +705,11 @@ public class XML {
             // Close tag </
 
             token = x.nextToken();
+            if(token instanceof String) {
+                if(stack.size() > 0 && stack.peek().equals(token)) {
+                    stack.pop();
+                }
+            }
             if (name == null) {
                 throw x.syntaxError("Mismatched close tag " + token);
             }
@@ -716,6 +719,7 @@ public class XML {
             if (x.nextToken() != GT) {
                 throw x.syntaxError("Misshaped close tag");
             }
+
             return true;
 
         } else if (token instanceof Character) {
@@ -725,6 +729,7 @@ public class XML {
 
         } else {
             tagName = (String) token;
+            stack.push(tagName);
             token = null;
             jsonObject = new JSONObject();
             boolean nilAttributeFound = false;
@@ -817,7 +822,7 @@ public class XML {
                             }
 //                            System.out.println("Reduced path: " + reducedPath);
 
-                            if (parse3(x, jsonObject, tagName, found, reducedPath, config)) {
+                            if (parse3(x, jsonObject, tagName, found, reducedPath, stack, config)) {
                                 if (jsonObject.length() == 0) {
                                     context.accumulate(tagName, "");
                                 } else if (jsonObject.length() == 1
