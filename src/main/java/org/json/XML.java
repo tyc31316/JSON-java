@@ -629,7 +629,7 @@ public class XML {
     }
 
 
-    public static boolean parse3(XMLTokener x, JSONObject context, String name, boolean found, String paths, Stack<String> stack, XMLParserConfiguration config)
+    public static boolean parse3(XMLTokener x, JSONObject context, String name, boolean[] found, String paths, Stack<String> stack, XMLParserConfiguration config)
             throws JSONException {
         char c;
         int i;
@@ -650,11 +650,11 @@ public class XML {
         // <<
 
         String[] pathArray = paths.split("/");
-//        System.out.println(Arrays.toString(pathArray));
-        // if it's the last element && equals the last tag
+//      System.out.println(Arrays.toString(pathArray));
+//      if it's the last element && equals the last tag
         if(pathArray.length == 1 && pathArray[0].equals(name)) {
             System.out.println("FROM PARSE3: found! saving!");
-            found = true;
+            found[0] = true;
         }
 
 
@@ -792,9 +792,9 @@ public class XML {
                             return false;
 
                             // only accumulate content on found (aka last) tag
-                        } else if (token instanceof String && found) {
+                        } else if (token instanceof String && found[0]) {
 
-//                            System.out.println("last one! get the content!");
+//                          System.out.println("last one! get the content!");
 
                             string = (String) token;
                             if (string.length() > 0) {

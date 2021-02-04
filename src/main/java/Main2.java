@@ -50,7 +50,8 @@ class Main2{
         String paths = path.toString();
 
         Stack<String> stack = new Stack<String>();
-        boolean found = false;
+        boolean[] found = new boolean[1];
+        found[0] = false;
         while(x.more()) {
             x.skipPast("<");
             if(x.more()) {
@@ -59,8 +60,8 @@ class Main2{
                 // original idea is that if found is true and stack size is 0,
                 // then we don't need to go further even if there are more tags
                 // currently still unable to do so
-                System.out.println(found);
-                if(stack.size() == 0 && found) {
+                System.out.println(found[0]);
+                if(stack.size() == 0 && found[0]) {
                     break;
                 }
             }
