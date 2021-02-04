@@ -755,7 +755,7 @@ public class XML {
                         } else if(config.getXsiTypeMap() != null && !config.getXsiTypeMap().isEmpty()
                                 && TYPE_ATTR.equals(string)) {
                             xmlXsiTypeConverter = config.getXsiTypeMap().get(token);
-                        } else if (!nilAttributeFound) {
+                        } else if (!nilAttributeFound && found[0]) {
                             jsonObject.accumulate(string,
                                     config.isKeepStrings()
                                             ? ((String) token)
@@ -763,7 +763,8 @@ public class XML {
                         }
                         token = null;
                     } else {
-                        jsonObject.accumulate(string, "");
+                    	if(found[0])
+                    		jsonObject.accumulate(string, "");
                     }
 
 
@@ -773,10 +774,13 @@ public class XML {
                         throw x.syntaxError("Misshaped tag");
                     }
                     if (nilAttributeFound) {
+                    	if(found[0])
                         context.accumulate(tagName, JSONObject.NULL);
                     } else if (jsonObject.length() > 0) {
+                    	if(found[0])
                         context.accumulate(tagName, jsonObject);
                     } else {
+                    	if(found[0])
                         context.accumulate(tagName, "");
                     }
                     return false;
@@ -824,11 +828,14 @@ public class XML {
 
                             if (parse3(x, jsonObject, tagName, found, reducedPath, stack, config)) {
                                 if (jsonObject.length() == 0) {
+                                	if(found[0])
                                     context.accumulate(tagName, "");
                                 } else if (jsonObject.length() == 1
                                         && jsonObject.opt(config.getcDataTagName()) != null) {
+                                	if(found[0])
                                     context.accumulate(tagName, jsonObject.opt(config.getcDataTagName()));
                                 } else {
+                                	if(found[0])
                                     context.accumulate(tagName, jsonObject);
                                 }
                                 return false;
