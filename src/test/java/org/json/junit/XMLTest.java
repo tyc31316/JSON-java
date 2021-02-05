@@ -33,6 +33,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
@@ -1328,6 +1329,37 @@ public class XMLTest {
         } catch (IOException e) {
             fail("file writer error: " +e.getMessage());
         }
+    }
+    
+    @Test
+    public void testReverseString() {
+    	
+    	Function<String, String> reverseString = new Function<String, String>() {
+			public String apply(String str) {
+				
+				StringBuilder builder = new StringBuilder();
+				for(int i = str.length()-1; i >= 0 ; i--) {
+					builder.append(str.charAt(i));
+				}
+				return builder.toString();
+			}
+		};
+		
+		InputStream xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("books_short.xml");
+        Reader xmlReader = new InputStreamReader(xmlStream);
+		JSONObject actual = XML.toJSONObject(xmlReader, reverseString);
+		//JSONObject original = XML.toJSONObject(xmlReader);
+		//System.out.println(original.toString());
+		InputStream jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("reversStringresult.json");
+        Scanner jsonReader = new Scanner (jsonStream);
+        StringBuilder builder = new StringBuilder();
+        while(jsonReader.hasNext()) {
+            builder.append(jsonReader.nextLine());
+        }
+        final JSONObject expected = new JSONObject(builder.toString());
+        Util.compareActualVsExpectedJsonObjects(actual,expected);
+		
+		
     }
 
 }
