@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.Stack;
+import java.util.function.Function;
 
 class Main2{
 
@@ -74,6 +75,21 @@ class Main2{
         else {
             return new JSONObject();
         }
+    }
+
+
+    public static JSONObject toJSONObject(Reader reader, Function<String, String> func) {
+        JSONObject jo = new JSONObject();
+        XMLTokener x = new XMLTokener(reader);
+
+        while(x.more()) {
+            x.skipPast("<");
+            if(x.more()) {
+                XML.parseToTransform(x, jo, null, func, XMLParserConfiguration.ORIGINAL);
+            }
+        }
+
+        return jo;
     }
 
     public static void main(String[] args) {
