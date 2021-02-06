@@ -1765,6 +1765,21 @@ public class XML {
 		return jo;
 	}
 
+	public static JSONObject toJSONObject2(Reader reader, Function<String, String> func) {
+
+        JSONObject jo = new JSONObject();
+        XMLTokener x = new XMLTokener(reader);
+
+        while(x.more()) {
+            x.skipPast("<");
+            if(x.more()) {
+                XML.parseToTransform(x, jo, null, func, XMLParserConfiguration.ORIGINAL);
+            }
+        }
+
+        return jo;
+
+    }
 
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.

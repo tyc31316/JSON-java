@@ -1362,6 +1362,56 @@ public class XMLTest {
 		
     }
 
+    @Test
+    public void testToJSONObject2OnAddingPrefix() {
+
+        Function<String, String> transform = (String key) -> ("swe262_" + key);
+
+        InputStream xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
+        Reader xmlReader = new InputStreamReader(xmlStream);
+
+        JSONObject jo = XML.toJSONObject2(xmlReader, transform);
+
+        InputStream jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_addPrefix.json");
+        Scanner jsonReader = new Scanner(jsonStream);
+        StringBuilder builder = new StringBuilder();
+        while(jsonReader.hasNext()) {
+            builder.append(jsonReader.nextLine());
+        }
+        final JSONObject expected = new JSONObject(builder.toString());
+        Util.compareActualVsExpectedJsonObjects(jo, expected);
+
+    }
+
+    @Test
+    public void testToJSONObject2OnReverseKey() {
+
+        Function<String, String> reverseString = str -> {
+
+            StringBuilder builder = new StringBuilder();
+            for(int i = str.length()-1; i >= 0 ; i--) {
+                builder.append(str.charAt(i));
+            }
+            return builder.toString();
+        };
+
+        InputStream xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("a.xml");
+        Reader xmlReader = new InputStreamReader(xmlStream);
+
+        JSONObject jo = XML.toJSONObject2(xmlReader, reverseString);
+
+        InputStream jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("a_reverseKey.json");
+        Scanner jsonReader = new Scanner(jsonStream);
+        StringBuilder builder = new StringBuilder();
+        while(jsonReader.hasNext()) {
+            builder.append(jsonReader.nextLine());
+        }
+        final JSONObject expected = new JSONObject(builder.toString());
+        Util.compareActualVsExpectedJsonObjects(jo, expected);
+
+    }
+
+
 }
 
 

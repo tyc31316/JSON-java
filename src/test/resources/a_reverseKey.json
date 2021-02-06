@@ -1,0 +1,130 @@
+{
+  "evitcA": true,
+  "DI": 1,
+  "seeF": {"etad": [
+    1000.21,
+    1000.21,
+    1000.21
+  ]},
+  "tset": {"golatac": [
+    {"koob": [
+      {
+        "rohtua": "Gambardella, Matthew",
+        "ecirp": 44.95,
+        "erneg": "Computer",
+        "etad_hsilbup": "2000-10-01",
+        "eltit": "XML Developer's Guide",
+        "id": "bk101",
+        "noitpircsed": "An in-depth look at creating applications\n      with XML."
+      },
+      {
+        "rohtua": "Ralls, Kim",
+        "ecirp": 5.95,
+        "erneg": "Fantasy",
+        "etad_hsilbup": "2000-12-16",
+        "eltit": "Midnight Rain",
+        "id": "bk102",
+        "noitpircsed": "A former architect battles corporate zombies,\n      an evil sorceress, and her own childhood to become queen\n      of the world."
+      },
+      {
+        "rohtua": "Corets, Eva",
+        "ecirp": 5.95,
+        "erneg": "Fantasy",
+        "etad_hsilbup": "2000-11-17",
+        "eltit": "Maeve Ascendant",
+        "id": "bk103",
+        "noitpircsed": "After the collapse of a nanotechnology\n      society in England, the young survivors lay the\n      foundation for a new society."
+      },
+      {
+        "rohtua": "Corets, Eva",
+        "ecirp": 5.95,
+        "erneg": "Fantasy",
+        "etad_hsilbup": "2001-03-10",
+        "eltit": "Oberon's Legacy",
+        "id": "bk104",
+        "noitpircsed": "In post-apocalypse England, the mysterious\n      agent known only as Oberon helps to create a new life\n      for the inhabitants of London. Sequel to Maeve\n      Ascendant."
+      },
+      {
+        "rohtua": "Corets, Eva",
+        "ecirp": 5.95,
+        "erneg": "Fantasy",
+        "etad_hsilbup": "2001-09-10",
+        "eltit": "The Sundered Grail",
+        "id": "bk105",
+        "noitpircsed": "The two daughters of Maeve, half-sisters,\n      battle one another for control of England. Sequel to\n      Oberon's Legacy."
+      },
+      {
+        "rohtua": "Randall, Cynthia",
+        "ecirp": 4.95,
+        "erneg": "Romance",
+        "etad_hsilbup": "2000-09-02",
+        "eltit": "Lover Birds",
+        "id": "bk106",
+        "noitpircsed": "When Carla meets Paul at an ornithology\n      conference, tempers fly as feathers get ruffled."
+      },
+      {
+        "rohtua": "Thurman, Paula",
+        "ecirp": 4.95,
+        "erneg": "Romance",
+        "etad_hsilbup": "2000-11-02",
+        "eltit": "Splish Splash",
+        "id": "bk107",
+        "noitpircsed": "A deep sea diver finds true love twenty\n      thousand leagues beneath the sea."
+      },
+      {
+        "rohtua": "Knorr, Stefan",
+        "ecirp": 4.95,
+        "erneg": "Horror",
+        "etad_hsilbup": "2000-12-06",
+        "eltit": "Creepy Crawlies",
+        "id": "bk108",
+        "noitpircsed": "An anthology of horror stories about roaches,\n      centipedes, scorpions  and other insects."
+      },
+      {
+        "rohtua": "Kress, Peter",
+        "ecirp": 6.95,
+        "erneg": "Science Fiction",
+        "etad_hsilbup": "2000-11-02",
+        "eltit": "Paradox Lost",
+        "id": "bk109",
+        "noitpircsed": "After an inadvertant trip through a Heisenberg\n      Uncertainty Device, James Salway discovers the problems\n      of being quantum."
+      },
+      {
+        "rohtua": "O'Brien, Tim",
+        "ecirp": 36.95,
+        "erneg": "Computer",
+        "etad_hsilbup": "2000-12-09",
+        "eltit": "Microsoft .NET: The Programming Bible",
+        "id": "bk110",
+        "noitpircsed": "Microsoft's .NET initiative is explored in\n      detail in this deep programmer's reference."
+      },
+      {
+        "rohtua": "O'Brien, Tim",
+        "ecirp": 36.95,
+        "erneg": "Computer",
+        "etad_hsilbup": "2000-12-01",
+        "eltit": "MSXML3: A Comprehensive Guide",
+        "id": "bk111",
+        "noitpircsed": "The Microsoft MSXML3 parser is covered in\n      detail, with attention to XML DOM interfaces, XSLT processing,\n      SAX and more."
+      },
+      {
+        "rohtua": "Galos, Mike",
+        "ecirp": 49.95,
+        "erneg": "Computer",
+        "etad_hsilbup": "2001-04-16",
+        "eltit": "Visual Studio 7: A Comprehensive Guide",
+        "id": "bk112",
+        "noitpircsed": "Microsoft Visual Studio 7 is explored in depth,\n      looking at how Visual Basic, Visual C++, C#, and ASP+ are\n      integrated into a comprehensive development\n      environment."
+      }
+    ]},
+    {"koob": "HI~"}
+  ]},
+  "emaN": {
+    "ah": [
+      {"jp": "oh"},
+      {"eheh": "asdasd"}
+    ],
+    "revmun": "aaa"
+  },
+  "sliateD": "asdf"
+}

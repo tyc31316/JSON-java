@@ -28,9 +28,16 @@ public class testCaseTest extends TestCase {
         File xml = new File("src/main/java/a.xml");
         FileReader reader = new FileReader(xml);
 
-        Function<String, String> transform = (String key) -> ("swe262_" + key);
+        Function<String, String> reverseString = str -> {
 
-        JSONObject jo = Main2.toJSONObject(reader, transform);
+            StringBuilder builder = new StringBuilder();
+            for(int i = str.length()-1; i >= 0 ; i--) {
+                builder.append(str.charAt(i));
+            }
+            return builder.toString();
+        };
+
+        JSONObject jo = Main2.toJSONObject(reader, reverseString);
 
         System.out.println(jo.toString(4));
 
