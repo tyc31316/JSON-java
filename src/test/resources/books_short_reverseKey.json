@@ -1,0 +1,25 @@
+{"tset": {"golatac": [
+  {"koob": [
+    {
+      "rohtua": "Gambardella, Matthew",
+      "eltit": "XML Developer's Guide"
+    },
+    {
+      "rohtua": "Corets, Eva",
+      "ecirp": 5.95,
+      "erneg": "Fantasy",
+      "etad_hsilbup": "2001-09-10",
+      "eltit": "The Sundered Grail",
+      "noitpircsed": "The two daughters of Maeve, half-sisters,\n                battle one another for control of England. Sequel to\n                Oberon's Legacy."
+    },
+    {
+      "rohtua": "Randall, Cynthia",
+      "ecirp": 4.95,
+      "erneg": "Romance",
+      "etad_hsilbup": "2000-09-02",
+      "eltit": "Lover Birds",
+      "noitpircsed": "When Carla meets Paul at an ornithology\n                conference, tempers fly as feathers get ruffled."
+    }
+  ]},
+  {"koob": "HI~"}
+]}}

@@ -25,7 +25,7 @@ public class testCaseTest extends TestCase {
 
     @Test
     public void testKeyTransform() throws FileNotFoundException {
-        File xml = new File("src/main/java/a.xml");
+        File xml = new File("src/main/java/books_short.xml");
         FileReader reader = new FileReader(xml);
 
         Function<String, String> reverseString = str -> {
