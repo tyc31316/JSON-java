@@ -1350,7 +1350,7 @@ public class XMLTest {
 		JSONObject actual = XML.toJSONObject(xmlReader, reverseString);
 		//JSONObject original = XML.toJSONObject(xmlReader);
 		//System.out.println(original.toString());
-		InputStream jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("books_short_reverseKey.json");
+		InputStream jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("reverseStringResult.json");
         Scanner jsonReader = new Scanner (jsonStream);
         StringBuilder builder = new StringBuilder();
         while(jsonReader.hasNext()) {
