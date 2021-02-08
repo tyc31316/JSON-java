@@ -5,42 +5,39 @@ Version 2.0 includes the following additional method:
 1) XML.java [line 855 -> 1036]:
      public static boolean parseToTransform(XMLTokener x, JSONObject context, String name, Function<String, String> func, XMLParserConfiguration config)
      
-        - aa
-         - This method read through XML, transform the tag name using given string transforming function, "func", and store the resulting JSON object in "context".
+         - This method reads through XML, transform the tag name using given string transforming function, "func", and store the resulting JSON object in "context".
          - This version converts all the tag names in XML file.
         
 2) XML.java [line 1038  -> 1220]:
     public static boolean parsetransformkey(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, Function<String, String> func)
     
-        - This method returns specified JSONObject.
-        - This version is an inefficient XML to JSONObject converting method yet ensures correct output with correct JSONPointer path.
+        - This method reads through XML, transform the tag name as well as the tag property using given string transforming function, "func", and store the resulting JSON object in "context".
+        - This version coverts both tag names and tag properties in XML file.
 
-3) XML.java [line 1125 -> 1177]:
-    toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)
+3) XML.java [line 1753 -> 1766]:
+    public static JSONObject toJSONObject(Reader reader, Function<String,String> func)
     
-        - This method takes a reader, a desired sub-object within the XML indicated by JSONPointer path, and replace with another given JSONObject.
-        - This method returns the entire XML as a JSONObject with replaced sub-object.
+        - This method takes a reader, string transforming function "func", and return a JSONObject with all of the keys transformed by "func".
+        - This method takes advantage of method 2) parsetransformkey, and hence transforms both tag names and properties.
+        
+4) XML.java [line 1768 -> 1781]:
+    public static JSONObject toJSONObject2(Reader reader, Function<String, String> func)
+    
+        - This method takes a reader, string transforming function "func", and return a JSONObject with all of the keys transformed by "func".
+        - This method takes advantage of method 1) parseToTransform, and hence transforms only tag names.
 
 
 JUnit tests set up
 
 1) Testing toJSONObject(Reader reader, JSONPointer path, JSONObject replacement):
 
-        1) testReplace() ----- XMLTest.java [line 1056 -> 1088]
-        2) testReplaceWithArray() ----- XMLTest.java [line 1090 -> 1122]
-        3) testReplaceWithInvalidPath() ----- XMLTest.java [line 1124 -> 1156]
+        - testReverseString() ----- XMLTest.java [line 1134 -> 1363]
+        
 
-2) Testin toJSONObject0 (Reader reader, JSONPointer path):
+2) Testing toJSONObject2(Reader reader, Function<String, String> func):
     
-        1) testExtractNestedObjectInArray() ----- XMLTest.java [line 1263 -> 1296]
-        2) testPathWithoutIndex() ----- XMLTest.java [line 1298 -> 1331]
-
-3) Testing toJSONObject1(Reader reader, JSONPointer path):
-
-        1) testSimpleExtract() ----- XMLTest.java [line 1158 -> 1191]
-        2) testExtractingNestedObject ----- XMLTest.java [line 1193 -> 1226]
-        3) testInvalidPointer ----- XMLTest.java [line 1228 -> 1261]
-
+        1) testToJSONObject2OnAddingPrefix() ----- XMLTest.java [line 1366 -> 1384]
+        2) testToJSONObject2OnReverseKey() ----- XMLTest.java [line 1387 -> 1411]
 
 Build
 
