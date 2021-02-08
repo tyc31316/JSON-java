@@ -1776,7 +1776,6 @@ public class XML {
                 XML.parseToTransform(x, jo, null, func, XMLParserConfiguration.ORIGINAL);
             }
         }
-
         return jo;
 
     }
