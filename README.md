@@ -1,3 +1,51 @@
+JSON in Java [package org.json] - ver. 3.0 (Milestone 3)
+
+Version 2.0 includes the following additional method:
+    
+1) XML.java [line 855 -> 1036]:
+     public static boolean parseToTransform(XMLTokener x, JSONObject context, String name, Function<String, String> func, XMLParserConfiguration config)
+     
+        - aa
+         - This method read through XML, transform the tag name using given string transforming function, "func", and store the resulting JSON object in "context".
+         - This version converts all the tag names in XML file.
+        
+2) XML.java [line 1038  -> 1220]:
+    public static boolean parsetransformkey(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, Function<String, String> func)
+    
+        - This method returns specified JSONObject.
+        - This version is an inefficient XML to JSONObject converting method yet ensures correct output with correct JSONPointer path.
+
+3) XML.java [line 1125 -> 1177]:
+    toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)
+    
+        - This method takes a reader, a desired sub-object within the XML indicated by JSONPointer path, and replace with another given JSONObject.
+        - This method returns the entire XML as a JSONObject with replaced sub-object.
+
+
+JUnit tests set up
+
+1) Testing toJSONObject(Reader reader, JSONPointer path, JSONObject replacement):
+
+        1) testReplace() ----- XMLTest.java [line 1056 -> 1088]
+        2) testReplaceWithArray() ----- XMLTest.java [line 1090 -> 1122]
+        3) testReplaceWithInvalidPath() ----- XMLTest.java [line 1124 -> 1156]
+
+2) Testin toJSONObject0 (Reader reader, JSONPointer path):
+    
+        1) testExtractNestedObjectInArray() ----- XMLTest.java [line 1263 -> 1296]
+        2) testPathWithoutIndex() ----- XMLTest.java [line 1298 -> 1331]
+
+3) Testing toJSONObject1(Reader reader, JSONPointer path):
+
+        1) testSimpleExtract() ----- XMLTest.java [line 1158 -> 1191]
+        2) testExtractingNestedObject ----- XMLTest.java [line 1193 -> 1226]
+        3) testInvalidPointer ----- XMLTest.java [line 1228 -> 1261]
+
+
+Build
+
+    - Build script is the same as the original package
+
 JSON in Java [package org.json] - ver. 2.0
 
 Version 2.0 includes the following additional method:
