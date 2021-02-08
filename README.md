@@ -1,6 +1,6 @@
 JSON in Java [package org.json] - ver. 3.0 (Milestone 3)
 
-Version 2.0 includes the following additional method:
+Version 3.0 includes the following additional method:
     
 1) XML.java [line 855 -> 1036]:
      public static boolean parseToTransform(XMLTokener x, JSONObject context, String name, Function<String, String> func, XMLParserConfiguration config)
