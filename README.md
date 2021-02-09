@@ -26,7 +26,7 @@ Version 3.0 includes the following additional method:
         - This method takes a reader, string transforming function "func", and return a JSONObject with all of the keys transformed by "func".
         - This method takes advantage of method 1) parseToTransform, and hence transforms only tag names.
 
-###### Compared to milestone 1, the performace of these two method have all improved. Since the key value is modified at the same time of reading XML file, while in milestone 1, the XML is first converted to a JSON object before the key is transformed.
+##### Compared to milestone 1, the performace of these two method have all improved. Since the key value is modified at the same time of reading XML file, while in milestone 1, the XML is first converted to a JSON object before the key is transformed.
 
 JUnit tests set up
 
