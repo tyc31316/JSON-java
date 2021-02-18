@@ -1,11 +1,10 @@
 import org.json.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.Stack;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 class Main2{
 
@@ -90,6 +89,47 @@ class Main2{
         }
 
         return jo;
+    }
+
+    public static JSONObjectStream toJSONObjectStream(Reader aReader) {
+
+        return new JSONObjectStream(aReader);
+    }
+
+
+    public static class JSONObjectStream {
+        private Reader aReader;
+        XMLTokener x;
+        JSONObject jo;
+        JSONObjectStream jsonObjStream;
+        Stream<JSONObject> inObj;
+
+        public JSONObjectStream(Reader aReader) {
+            this.aReader = aReader;
+            x = new XMLTokener(aReader);
+            jo = new JSONObject();
+
+            // read by line / char and store into Stream<T>
+            while(x.more()) {
+                x.skipPast("<");
+                if(x.more()) {
+                    XML.parse(x, jo, null, XMLParserConfiguration.ORIGINAL);
+                }
+
+            }
+
+        }
+
+        public JSONObject write(Writer writer) {
+            // get whatever that's stored in Stream<T> class variable
+            // should just write it into json object
+
+        }
+
+        public boolean filter(Predicate<Object> predicate) {
+            // gets whatever that's stored in the Stream<T> inString and filter it
+            return predicate.test(inObj);
+        }
     }
 
     public static void main(String[] args) {

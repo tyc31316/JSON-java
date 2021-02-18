@@ -3,9 +3,7 @@ import org.json.JSONObject;
 import org.json.JSONPointer;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.function.Function;
 
 public class testCaseTest extends TestCase {
@@ -41,5 +39,17 @@ public class testCaseTest extends TestCase {
 
         System.out.println(jo.toString(4));
 
+    }
+
+    @Test
+    public void testToJSONObjectStream() throws FileNotFoundException {
+
+        File xml = new File("src/main/java/books_short.xml");
+        FileReader aReader = new FileReader(xml);
+        // need to give a file name
+        Writer writer = new PrintWriter("");
+
+
+        JSONObject jo = Main2.toJSONObjectStream(aReader).write(writer);
     }
 }
