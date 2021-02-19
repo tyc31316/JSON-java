@@ -1,9 +1,12 @@
 import org.json.*;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Stack;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class Main2{
@@ -94,41 +97,68 @@ class Main2{
     public static JSONObjectStream toJSONObjectStream(Reader aReader) {
 
         return new JSONObjectStream(aReader);
+
     }
 
 
     public static class JSONObjectStream {
-        private Reader aReader;
+
+        Reader aReader;
         XMLTokener x;
-        JSONObject jo;
-        JSONObjectStream jsonObjStream;
-        Stream<JSONObject> inObj;
+        ArrayList<Stream<String>> jsonObjList;
+        Iterator<Stream<String>> jsonObjIterator;
 
         public JSONObjectStream(Reader aReader) {
-            this.aReader = aReader;
-            x = new XMLTokener(aReader);
-            jo = new JSONObject();
 
             // read by line / char and store into Stream<T>
+            this.aReader = aReader;
+            x = new XMLTokener(aReader);
+            jsonObjList = new ArrayList<>();
+            jsonObjIterator = jsonObjList.listIterator();
+
             while(x.more()) {
                 x.skipPast("<");
+                JSONObject jo = new JSONObject();
                 if(x.more()) {
                     XML.parse(x, jo, null, XMLParserConfiguration.ORIGINAL);
                 }
 
-            }
+                String joStr = jo.toString();
+                System.out.println(joStr);
 
+                // TODO: If I understand this correctly, the problem with this
+                //  is that it'll load everyhting at once, need to somehow break it down
+                jsonObjList.add(Stream.of(joStr));
+                jsonObjIterator = jsonObjList.iterator();
+            }
         }
 
-        public JSONObject write(Writer writer) {
-            // get whatever that's stored in Stream<T> class variable
-            // should just write it into json object
+        public void write(Writer writer) {
+            // if the iterator has next, then write it
+            System.out.println(jsonObjIterator.hasNext());
+            while(jsonObjIterator.hasNext()) {
+                System.out.println("Got here??");
 
+                // convert from Stream<JSONObject> to JSONObject
+                JSONObject jo = new JSONObject(jsonObjIterator.next().collect(Collectors.joining()));
+                System.out.println(jo.toString(4));
+                try {
+                    // the format of the output is not correct,
+                    // need to figure out how to add a top level jsobojb
+                    writer.write(jo.toString(4) + "\n");
+                    writer.flush();
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         public boolean filter(Predicate<Object> predicate) {
             // gets whatever that's stored in the Stream<T> inString and filter it
-            return predicate.test(inObj);
+            if(jsonObjIterator.hasNext()) {
+                return predicate.test(jsonObjIterator.next());
+            }
+            return false;
         }
     }
 

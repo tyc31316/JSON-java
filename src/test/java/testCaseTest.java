@@ -42,14 +42,13 @@ public class testCaseTest extends TestCase {
     }
 
     @Test
-    public void testToJSONObjectStream() throws FileNotFoundException {
+    public void testToJSONObjectStream() throws IOException {
 
-        File xml = new File("src/main/java/books_short.xml");
+        File xml = new File("src/main/java/simpleXML.xml");
         FileReader aReader = new FileReader(xml);
         // need to give a file name
-        Writer writer = new PrintWriter("");
+        FileWriter writer = new FileWriter("src/main/java/JSONOutput.json", true);
+        Main2.toJSONObjectStream(aReader).write(writer);
 
-
-        JSONObject jo = Main2.toJSONObjectStream(aReader).write(writer);
     }
 }
