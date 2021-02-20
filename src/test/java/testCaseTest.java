@@ -52,7 +52,7 @@ public class testCaseTest extends TestCase {
         FileReader aReader = new FileReader(xml);
 
         XML.toJSONObject(aReader).toStream()
-                .filter(node -> node.toString().contains("author"))
+                .filter(node -> node.toString().contains("title"))
                 .collect(Collectors.toList())
                 .forEach(e -> System.out.println(e.getKey() + ":\n" + e.getValue()));
 

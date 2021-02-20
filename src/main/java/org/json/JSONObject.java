@@ -431,9 +431,8 @@ public class JSONObject {
 
     public Stream<Entry<String, String>> toStream() throws Exception {
 
-        System.out.println("hello?");
         Object value = this.map.entrySet().stream().findFirst().get().getValue();
-        System.out.println("Value is : " + value);
+//        System.out.println("Value is : " + value);
         HashMap<String, String> map = new HashMap<>();
         try {
             flattened(this.map.entrySet().stream().findFirst().get().getKey(), value, map);
@@ -449,24 +448,25 @@ public class JSONObject {
         if(o instanceof JSONObject) {
             JSONObject jo = (JSONObject) o;
             Iterator<Map.Entry<String, Object>> it = jo.entrySet().iterator();
+            String path = currentPath.isEmpty()? "" : currentPath + "/";
 
             while(it.hasNext()) {
                 Map.Entry<String, Object> entry = it.next();
-                flattened(entry.getKey(), entry.getValue(), map);
+                flattened(path + entry.getKey(), entry.getValue(), map);
             }
         } else if (o instanceof JSONArray) {
             JSONArray ja = (JSONArray) o;
             for(int i = 0; i < ja.length(); i++) {
-                flattened(currentPath + "[" + i + "]", ja.get(i), map);
+                flattened(currentPath + "/" + i, ja.get(i), map);
             }
         } else if (o instanceof String) {
             String value = (String) o;
 
-            if (map.containsKey(currentPath)) {
-                map.put(currentPath, map.get(currentPath) + ", \n" + "{ " + value + " }");
-            } else {
-                map.put(currentPath, "{ " + value + " }");
-            }
+//            if (map.containsKey(currentPath)) {
+//                map.put(currentPath, map.get(currentPath) + ", \n" + "{ " + value + " }");
+//            } else {
+            map.put(currentPath, "{ " + value + " }");
+//            }
         }
 
     }
