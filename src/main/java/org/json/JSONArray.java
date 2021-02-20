@@ -86,7 +86,7 @@ public class JSONArray implements Iterable<Object> {
     /**
      * The arrayList where the JSONArray's properties are kept.
      */
-    private final ArrayList<Object> myArrayList;
+    public final ArrayList<Object> myArrayList;
 
     /**
      * Construct an empty JSONArray.

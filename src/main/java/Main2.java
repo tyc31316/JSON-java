@@ -94,6 +94,7 @@ class Main2{
         return jo;
     }
 
+
     public static JSONObjectStream toJSONObjectStream(Reader aReader) {
 
         return new JSONObjectStream(aReader);
@@ -102,6 +103,8 @@ class Main2{
 
 
     public static class JSONObjectStream {
+
+        // also need to stream path
 
         Reader aReader;
         XMLTokener x;
@@ -161,6 +164,8 @@ class Main2{
             return false;
         }
     }
+
+
 
     public static void main(String[] args) {
 

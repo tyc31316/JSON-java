@@ -1,10 +1,15 @@
 import junit.framework.TestCase;
 import org.json.JSONObject;
 import org.json.JSONPointer;
+import org.json.XML;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class testCaseTest extends TestCase {
 
@@ -42,13 +47,23 @@ public class testCaseTest extends TestCase {
     }
 
     @Test
-    public void testToJSONObjectStream() throws IOException {
+    public void testToJSONObjectStream() throws Exception {
 
-        File xml = new File("src/main/java/simpleXML.xml");
+        File xml = new File("src/main/java/books_short.xml");
         FileReader aReader = new FileReader(xml);
-        // need to give a file name
-        FileWriter writer = new FileWriter("src/main/java/JSONOutput.json", true);
-        Main2.toJSONObjectStream(aReader).write(writer);
+//        // need to give a file name
+//        FileWriter writer = new FileWriter("src/main/java/JSONOutput.json", true);
+//        Main2.toJSONObjectStream(aReader).write(writer);
+
+        AtomicInteger counter = new AtomicInteger();
+//        XML.toJSONObject(aReader).toStream().collect(Collectors.toList()).forEach(e -> System.out.println(e.getKey() + "  -  " + e.getValue()));
+        XML.toJSONObject(aReader).toStream()
+                .filter(node -> node.toString().contains("author"))
+                .collect(Collectors.toList())
+                .forEach(e -> System.out.println(e.getKey() + "  -  " + e.getValue()));
+//        for(Object name : authors) {
+//            System.out.println(name);
+//        }
 
     }
 }

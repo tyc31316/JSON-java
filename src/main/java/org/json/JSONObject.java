@@ -1,31 +1,6 @@
 package org.json;
 
 import java.io.Closeable;
-
-/*
- Copyright (c) 2002 JSON.org
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
-
- The Software shall be used for Good, not Evil.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
- */
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -36,16 +11,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external
@@ -161,7 +130,7 @@ public class JSONObject {
     /**
      * The map where the JSONObject's properties are kept.
      */
-    private final Map<String, Object> map;
+    public final Map<String, Object> map;
 
     /**
      * It is sometimes more convenient and less ambiguous to have a
@@ -459,6 +428,55 @@ public class JSONObject {
     protected JSONObject(int initialCapacity){
         this.map = new HashMap<String, Object>(initialCapacity);
     }
+
+    public Stream<Entry<String, String>> toStream() throws Exception {
+        Object value = this.map.entrySet().stream().findFirst().get().getValue();
+        HashMap<String, String> map = new HashMap<>();
+        try {
+            flattened(this.map.entrySet().stream().findFirst().get().getKey(), value, map);
+        } catch (Exception  e) {
+            e.printStackTrace();
+        }
+        System.out.println(map);
+        return map.entrySet().stream();
+
+//        if(value == null) {
+//            throw new Exception("The object is null");
+//        }
+//        if(value instanceof JSONObject) {
+//            System.out.println("JSONObject!");
+//            return ((JSONObject) value).map.values().stream();
+//        } else if (value instanceof JSONArray) {
+//            return ((JSONArray) value).myArrayList.stream();
+//        }
+//        else {
+//            throw new Exception("Probably an empty object");
+//        }
+    }
+
+    public void flattened(String currentPath, Object o, HashMap<String, String> map) {
+        if(o instanceof JSONObject) {
+            System.out.println("line 458 JSONObject!");
+            JSONObject jo = (JSONObject) o;
+            Iterator<Map.Entry<String, Object>> it = jo.entrySet().iterator();
+
+            while(it.hasNext()) {
+                Map.Entry<String, Object> entry = it.next();
+                flattened(entry.getKey(), entry.getValue(), map);
+            }
+        } else if (o instanceof JSONArray) {
+            System.out.println("line 467 JSONArray!");
+            JSONArray ja = (JSONArray) o;
+            for(int i = 0; i < ja.length(); i++) {
+                flattened(currentPath + "[" + i + "]", ja.get(i), map);
+            }
+        } else if (o instanceof String) {
+            System.out.println("Line 473 String!");
+            String value = (String) o;
+            map.put(currentPath, value);
+        }
+    }
+
 
     /**
      * Accumulate values under a key. It is similar to the put method except
