@@ -53,7 +53,23 @@ public class testCaseTest extends TestCase {
 
         XML.toJSONObject(aReader).toStream()
                 .filter(node -> node.toString().contains("title"))
-                .collect(Collectors.toList())
+//                .collect(Collectors.toList())
+                .forEach(e -> System.out.println(e.getKey() + ":\n" + e.getValue()));
+
+//        List<Map.Entry<String, String>> authors = XML.toJSONObject(aReader).toStream()
+//                .filter(node -> node.toString().contains("title"))
+//                .collect(Collectors.toList());
+
+    }
+    
+    @Test
+    public void testToJSONObjectStream1() throws Exception {
+
+        JSONObject jo = new JSONObject("{\"aaaa\":null}");
+
+        jo.toStream()
+                .filter(node -> node.toString().contains("title"))
+//                .collect(Collectors.toList())
                 .forEach(e -> System.out.println(e.getKey() + ":\n" + e.getValue()));
 
 //        List<Map.Entry<String, String>> authors = XML.toJSONObject(aReader).toStream()

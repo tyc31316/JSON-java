@@ -432,6 +432,7 @@ public class JSONObject {
     public Stream<Entry<String, String>> toStream() throws Exception {
 
         Object value = this.map.entrySet().stream().findFirst().get().getValue();
+//        System.out.println("Key is: "+map.entrySet().stream().findFirst().get().getKey());
 //        System.out.println("Value is : " + value);
         HashMap<String, String> map = new HashMap<>();
         try {
