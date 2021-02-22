@@ -13,48 +13,48 @@ import java.util.stream.Collectors;
 public class testCaseTest extends TestCase {
 
 
-    @Test
-    public void testCase() throws FileNotFoundException {
-        File xml = new File("src/main/java/simpleXML.xml");
-        FileReader reader = new FileReader(xml);
-        JSONPointer pointer = new JSONPointer("/go/note/random/hello");
-
-        JSONObject jo = Main2.toJSONObject2(reader, pointer);
-
-        System.out.println(jo.toString(4));
-
-    }
-
-    @Test
-    public void testKeyTransform() throws FileNotFoundException {
-        File xml = new File("src/main/java/books_short.xml");
-        FileReader reader = new FileReader(xml);
-
-        Function<String, String> reverseString = str -> {
-
-            StringBuilder builder = new StringBuilder();
-            for(int i = str.length()-1; i >= 0 ; i--) {
-                builder.append(str.charAt(i));
-            }
-            return builder.toString();
-        };
-
-        JSONObject jo = Main2.toJSONObject(reader, reverseString);
-
-        System.out.println(jo.toString(4));
-
-    }
+//    @Test
+//    public void testCase() throws FileNotFoundException {
+//        File xml = new File("src/main/java/simpleXML.xml");
+//        FileReader reader = new FileReader(xml);
+//        JSONPointer pointer = new JSONPointer("/go/note/random/hello");
+//
+//        JSONObject jo = Main2.toJSONObject2(reader, pointer);
+//
+//        System.out.println(jo.toString(4));
+//
+//    }
+//
+//    @Test
+//    public void testKeyTransform() throws FileNotFoundException {
+//        File xml = new File("src/main/java/books_short.xml");
+//        FileReader reader = new FileReader(xml);
+//
+//        Function<String, String> reverseString = str -> {
+//
+//            StringBuilder builder = new StringBuilder();
+//            for(int i = str.length()-1; i >= 0 ; i--) {
+//                builder.append(str.charAt(i));
+//            }
+//            return builder.toString();
+//        };
+//
+//        JSONObject jo = Main2.toJSONObject(reader, reverseString);
+//
+//        System.out.println(jo.toString(4));
+//
+//    }
 
     @Test
     public void testToJSONObjectStream() throws Exception {
 
-        File xml = new File("src/main/java/Issue537_2.xml");
+        File xml = new File("src/main/java/a.xml");
         FileReader aReader = new FileReader(xml);
 
         XML.toJSONObject(aReader).toStream()
-                .filter(node -> node.toString().contains("measure"))
+                .filter(node -> node.toString().contains("book"))
                 .collect(Collectors.toList())
-                .forEach(e -> System.out.println(e.getValue() + "\n" + e.getKey()));
+                .forEach(e -> System.out.println(e.getValue() + "\n" + e.getKey().toString()));
 
 //        List<Map.Entry<String, String>> authors = XML.toJSONObject(aReader).toStream()
 //                .filter(node -> node.toString().contains("title"))

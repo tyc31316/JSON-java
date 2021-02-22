@@ -447,6 +447,7 @@ public class JSONObject {
 
     public void flattened(String currentPath, String key, Object o, HashMap<Object, String> map) {
 
+    	
         if(o instanceof JSONObject) {
             JSONObject jo = (JSONObject) o;
             Iterator<Map.Entry<String, Object>> it = jo.entrySet().iterator();
@@ -463,7 +464,11 @@ public class JSONObject {
             }
         } else if (o instanceof String) {
             String value = (String) o;
-            JSONObject temp = new JSONObject("{\"" + key + "\":\"" + value + "\"}");
+            String str = "{\"" + key + "\":\"" + value + "\"}";
+            str = str.replaceAll("[\\s]+", " ");
+            System.out.println(str);
+            JSONObject temp = new JSONObject(str);
+            
             map.put(temp, currentPath);
 
         }
