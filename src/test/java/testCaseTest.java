@@ -48,13 +48,13 @@ public class testCaseTest extends TestCase {
     @Test
     public void testToJSONObjectStream() throws Exception {
 
-        File xml = new File("src/main/java/a.xml");
+        File xml = new File("src/main/java/Issue537_2.xml");
         FileReader aReader = new FileReader(xml);
 
         XML.toJSONObject(aReader).toStream()
-                .filter(node -> node.toString().contains("title"))
-//                .collect(Collectors.toList())
-                .forEach(e -> System.out.println(e.getKey() + ":\n" + e.getValue()));
+                .filter(node -> node.toString().contains("measure"))
+                .collect(Collectors.toList())
+                .forEach(e -> System.out.println(e.getValue() + "\n" + e.getKey()));
 
 //        List<Map.Entry<String, String>> authors = XML.toJSONObject(aReader).toStream()
 //                .filter(node -> node.toString().contains("title"))

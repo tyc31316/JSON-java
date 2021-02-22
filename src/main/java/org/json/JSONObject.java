@@ -429,14 +429,15 @@ public class JSONObject {
         this.map = new HashMap<String, Object>(initialCapacity);
     }
 
-    public Stream<Entry<String, String>> toStream() throws Exception {
+    public Stream<Entry<Object, String>> toStream() {
 
         Object value = this.map.entrySet().stream().findFirst().get().getValue();
-//        System.out.println("Key is: "+map.entrySet().stream().findFirst().get().getKey());
-//        System.out.println("Value is : " + value);
-        HashMap<String, String> map = new HashMap<>();
+        String key = this.map.entrySet().stream().findFirst().get().getKey();
+        System.out.println(key);
+
+        HashMap<Object, String> map = new HashMap<>();
         try {
-            flattened(this.map.entrySet().stream().findFirst().get().getKey(), value, map);
+            flattened(key, key, value, map);
         } catch (Exception  e) {
             e.printStackTrace();
         }
@@ -444,7 +445,7 @@ public class JSONObject {
 
     }
 
-    public void flattened(String currentPath, Object o, HashMap<String, String> map) {
+    public void flattened(String currentPath, String key, Object o, HashMap<Object, String> map) {
 
         if(o instanceof JSONObject) {
             JSONObject jo = (JSONObject) o;
@@ -453,21 +454,18 @@ public class JSONObject {
 
             while(it.hasNext()) {
                 Map.Entry<String, Object> entry = it.next();
-                flattened(path + entry.getKey(), entry.getValue(), map);
+                flattened(path + entry.getKey(), entry.getKey(), entry.getValue(), map);
             }
         } else if (o instanceof JSONArray) {
             JSONArray ja = (JSONArray) o;
             for(int i = 0; i < ja.length(); i++) {
-                flattened(currentPath + "/" + i, ja.get(i), map);
+                flattened(currentPath + "/" + i, currentPath, ja.get(i), map);
             }
         } else if (o instanceof String) {
             String value = (String) o;
+            JSONObject temp = new JSONObject("{\"" + key + "\":\"" + value + "\"}");
+            map.put(temp, currentPath);
 
-//            if (map.containsKey(currentPath)) {
-//                map.put(currentPath, map.get(currentPath) + ", \n" + "{ " + value + " }");
-//            } else {
-            map.put(currentPath, "{ " + value + " }");
-//            }
         }
 
     }
