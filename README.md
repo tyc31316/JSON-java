@@ -1,3 +1,35 @@
+JSON in Java [package org.json] - ver. 4.0 (Milestone 4)
+
+Version 4.0 includes the following additional methods:
+    
+1) JSONObject.java [line 432 -> 447]:
+     public Stream<Entry<Object, String>> toStream()
+     
+         - This method converts a JSONObject to a stream, facilitating the operations of stream such as filter(), forEach(), etc.
+         
+2) JSONObject.java [line 449 -> 477]:
+    public void flattened(String currentPath, String key, Object o, HashMap<Object, String> map)
+    
+        - This method is a functionality that serves as a recurssion process inside the toStream method.
+    
+JUnit tests set up
+
+1) Testing functionality of filter:
+
+        - public void testToStreamFilter() throws Exception ----- JSONObjectTest.java [line 3244 -> 3253]
+
+2) Testing functionality of collect:
+    
+        - public void testToStreamCollect() throws Exception ----- JSONObjectTest.java [line 3256 -> 3277]
+
+3) Testing funcionality of map (updating node):
+
+        - public void testToStreamMapAddPrefix() throws Exception ----- JSONObjectTest.java [line 3281 -> 3291]
+
+Build
+
+    - Build script is the same as the original package
+
 JSON in Java [package org.json] - ver. 3.0 (Milestone 3)
 
 Version 3.0 includes the following additional method:
