@@ -433,7 +433,7 @@ public class JSONObject {
 
         Object value = this.map.entrySet().stream().findFirst().get().getValue();
         String key = this.map.entrySet().stream().findFirst().get().getKey();
-        System.out.println(key);
+//        System.out.println(key);
 
         HashMap<Object, String> map = new HashMap<>();
         try {
@@ -441,6 +441,7 @@ public class JSONObject {
         } catch (Exception  e) {
             e.printStackTrace();
         }
+       
         return map.entrySet().stream();
 
     }
@@ -466,7 +467,7 @@ public class JSONObject {
             String value = (String) o;
             String str = "{\"" + key + "\":\"" + value + "\"}";
             str = str.replaceAll("[\\s]+", " ");
-            System.out.println(str);
+//            System.out.println(str);
             JSONObject temp = new JSONObject(str);
             
             map.put(temp, currentPath);

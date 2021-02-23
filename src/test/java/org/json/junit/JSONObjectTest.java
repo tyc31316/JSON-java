@@ -31,9 +31,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -45,11 +48,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.json.CDL;
 import org.json.JSONArray;
@@ -80,6 +87,8 @@ import org.junit.Test;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+
+import junit.framework.Assert;
 
 /**
  * JSONObject, along with JSONArray, are the central classes of the reference app.
@@ -3229,5 +3238,79 @@ public class JSONObjectTest {
         jsonObject.clear(); //Clears the JSONObject
         assertTrue("expected jsonObject.length() == 0", jsonObject.length() == 0); //Check if its length is 0
         jsonObject.getInt("key1"); //Should throws org.json.JSONException: JSONObject["asd"] not found
+    }
+    
+    @Test
+    public void testToStreamFilter() throws Exception {
+
+        File xml = new File("src/main/java/a.xml");
+        FileReader aReader = new FileReader(xml);
+
+        XML.toJSONObject(aReader).toStream()
+        		.filter(e -> e.toString().contains("title"))
+                .forEach(e -> assertTrue(e.toString().contains("title")));
+
+    }
+    
+    @Test
+    public void testToStreamCollect() throws Exception {
+
+    	File xml = new File("src/main/java/a.xml");
+        FileReader aReader = new FileReader(xml);
+        JSONObject obj = XML.toJSONObject("<Books><book><title>AAA</title><author>ASmith</author></book><book><title>BBB</title><author>BSmith</author></book></Books>");
+    	
+    	
+    	List<JSONObject> nodelist =  obj.toStream()
+    	.map(node -> (JSONObject) node.getKey()).collect(Collectors.toList());
+    	
+    	
+    	List<String> expected = new ArrayList<>();
+    	expected.add("{\"title\":\"BBB\"}");
+    	expected.add("{\"title\":\"AAA\"}");
+    	expected.add("{\"author\":\"BSmith\"}");
+    	expected.add("{\"author\":\"ASmith\"}");
+    	assertEquals(nodelist.size(),expected.size());
+    	for(int i = 0 ; i < nodelist.size(); i++) {
+    		assertEquals(nodelist.get(i).toString(),expected.get(i));
+    	}
+    	
+    }
+    
+    
+    @Test
+    public void testToStreamMapAddPrefix() throws Exception {
+
+    	JSONObject obj = XML.toJSONObject("<Books><book><title>AAA</title><author>ASmith</author></book><book><title>BBB</title><author>BSmith</author></book></Books>");
+    	
+    	obj.toStream()
+    	.map(node -> {
+    		addprefix((JSONObject)node.getKey());
+    		return node;
+    		})
+    	.forEach( e ->   assertTrue(e.getKey().toString().startsWith("{\"swe262_")) );
+    }
+    
+    private static void addprefix(JSONObject jo){
+        Set<String> keys = new HashSet<>(jo.keySet());
+        for(String s : keys){
+            if(jo.opt(s) instanceof JSONObject){
+                addprefix((JSONObject) jo.opt(s));
+            }
+                
+            else if (jo.opt(s) instanceof JSONArray){
+                addprefix((JSONArray) jo.opt(s));
+            }
+            String swe = "swe262_"+s;
+            jo.put(swe,jo.opt(s));
+            jo.remove(s);
+        }
+    }
+    private static void addprefix(JSONArray ja){
+        for(int i = 0 ; i < ja.length() ; i++){
+            if(ja.opt(i) instanceof JSONObject)
+                addprefix((JSONObject) ja.opt(i));
+            else if(ja.opt(i) instanceof JSONArray)
+                addprefix((JSONArray) ja.opt(i));
+        }
     }
 }
