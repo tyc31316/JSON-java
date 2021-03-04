@@ -30,6 +30,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 
 
@@ -1779,6 +1782,13 @@ public class XML {
         return jo;
 
     }
+	
+	public static Future<JSONObject> toFutureJSONObject(Reader reader){
+		
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		return executor.submit( () -> { return toJSONObject(reader);} );
+		
+	}
 
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
