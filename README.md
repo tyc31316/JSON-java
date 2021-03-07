@@ -15,6 +15,8 @@ JUnit Test:
         public void testAsynchronousToFutureJSONObject()
         
 2) Not quite a test but want to see which one gets returned first (XMLTest.java [Line 1445 - 1478]
+
+    - Note: XML is not included in the repo, please get your own big XML file to run this test
         
         public void testAsynchronousToFutureJSONObjectOnSmallAndGiantXMLFile()
 
