@@ -1,5 +1,25 @@
 JSON in Java [package org.json] - ver. 4.0 (Milestone 4)
 
+Version 5.0 inlcudes the following additional methods:
+
+1) XML.java [Line 1786 - 1791]
+    public static Future<JSONObject> toFutureJSONObject(Reader aReader)
+    
+        - This this an asynchronous method that will return a JSONObject once the toJSONObject is completed, and in the meantime client will not be blocked to do something else.
+
+
+JUnit Test:
+
+1) Test returned Future JSONObject is what is expected (XMLTest.java [Line 1416 - 1442])
+
+        public void testAsynchronousToFutureJSONObject()
+        
+2) Not quite a test but want to see which one gets returned first (XMLTest.java [Line 1445 - 1478]
+        
+        public void testAsynchronousToFutureJSONObjectOnSmallAndGiantXMLFile()
+
+--------------------------------------------
+
 Version 4.0 includes the following additional methods:
     
 1) JSONObject.java [line 432 -> 447]:

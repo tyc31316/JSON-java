@@ -1786,7 +1786,7 @@ public class XML {
 	public static Future<JSONObject> toFutureJSONObject(Reader reader){
 		
 		ExecutorService executor = Executors.newSingleThreadExecutor();
-		return executor.submit( () -> { return toJSONObject(reader);} );
+		return executor.submit( () -> toJSONObject(reader));
 		
 	}
 

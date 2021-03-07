@@ -1,0 +1,25 @@
+{"test": {"catalog": [
+  {"book": [
+    {
+      "author": "Gambardella, Matthew",
+      "title": "XML Developer's Guide"
+    },
+    {
+      "author": "Corets, Eva",
+      "price": 5.95,
+      "genre": "Fantasy",
+      "description": "The two daughters of Maeve, half-sisters,\n                battle one another for control of England. Sequel to\n                Oberon's Legacy.",
+      "title": "The Sundered Grail",
+      "publish_date": "2001-09-10"
+    },
+    {
+      "author": "Randall, Cynthia",
+      "price": 4.95,
+      "genre": "Romance",
+      "description": "When Carla meets Paul at an ornithology\n                conference, tempers fly as feathers get ruffled.",
+      "title": "Lover Birds",
+      "publish_date": "2000-09-02"
+    }
+  ]},
+  {"book": "HI~"}
+]}}

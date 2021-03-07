@@ -33,6 +33,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import static org.junit.Assert.*;
@@ -1411,6 +1412,70 @@ public class XMLTest {
     }
 
 
+    @Test
+    public void testAsynchronousToFutureJSONObject() {
+        InputStream xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("books_short.xml");
+        Reader xmlReader = new InputStreamReader(xmlStream);
+
+        Future<JSONObject> fjo = XML.toFutureJSONObject(xmlReader);
+
+        JSONObject jo = null;
+        try {
+            jo = fjo.get();
+//            System.out.println("this is future jo:");
+//            System.out.println(jo.toString(4));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        InputStream jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("books_short.json");
+        Scanner jsonReader = new Scanner(jsonStream);
+        StringBuilder builder = new StringBuilder();
+        while(jsonReader.hasNext()) {
+            builder.append(jsonReader.nextLine());
+        }
+        final JSONObject expected = new JSONObject(builder.toString());
+//        System.out.println(expected.toString(4));
+
+        Util.compareActualVsExpectedJsonObjects(jo, expected);
+    }
+
+    @Test
+    public void testAsynchronousToFutureJSONObjectOnSmallAndGiantXMLFile() {
+
+        InputStream xmlStream150 = XMLTest.class.getClassLoader().getResourceAsStream("150mb.xml");
+        Reader xmlReader150 = new InputStreamReader(xmlStream150);
+        InputStream xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("simpleXML.xml");
+        Reader xmlReader = new InputStreamReader(xmlStream);
+
+        Future<JSONObject> fjo150 = XML.toFutureJSONObject(xmlReader150);
+        Future<JSONObject> fjo = XML.toFutureJSONObject(xmlReader);
+
+        JSONObject jo150 = null;
+        JSONObject jo = null;
+        while(!fjo.isDone() && !fjo150.isDone()) {
+            if (fjo150.isDone()) {
+                System.out.println("here?");
+                try {
+                    jo150 = fjo150.get();
+                    System.out.println("The big XML file is done first!");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fjo.isDone()) {
+                System.out.println("or here?");
+                try {
+                    jo = fjo.get();
+                    System.out.println("The small XML file is done first!");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
 
 
