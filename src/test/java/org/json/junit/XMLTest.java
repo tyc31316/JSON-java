@@ -1444,6 +1444,16 @@ public class XMLTest {
     @Test
     public void testAsynchronousToFutureJSONObjectOnSmallAndGiantXMLFile() {
 
+        // get the expected json object
+        InputStream jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("simpleXML.json");
+        Scanner jsonReader = new Scanner(jsonStream);
+        StringBuilder builder = new StringBuilder();
+        while(jsonReader.hasNext()) {
+            builder.append(jsonReader.nextLine());
+        }
+        final JSONObject expected = new JSONObject(builder.toString());
+
+        // get & load XML files
         InputStream xmlStream150 = XMLTest.class.getClassLoader().getResourceAsStream("150mb.xml");
         Reader xmlReader150 = new InputStreamReader(xmlStream150);
         InputStream xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("simpleXML.xml");
@@ -1469,12 +1479,16 @@ public class XMLTest {
                 System.out.println("or here?");
                 try {
                     jo = fjo.get();
+                    System.out.println(jo.toString(4));
                     System.out.println("The small XML file is done first!");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
+
+        Util.compareActualVsExpectedJsonObjects(jo, expected);
+        assertFalse(fjo150.isDone());
     }
 }
 
