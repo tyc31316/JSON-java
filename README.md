@@ -18,7 +18,7 @@ JUnit Test:
 
     - Note: XML is not included in the repo, please get your own big XML file to run this test
         
-        public void testAsynchronousToFutureJSONObjectOnSmallAndGiantXMLFile()
+            public void testAsynchronousToFutureJSONObjectOnSmallAndGiantXMLFile()
 
 --------------------------------------------
 
